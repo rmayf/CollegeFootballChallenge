@@ -14,9 +14,9 @@ class TeamSpider(scrapy.Spider):
       teamSelectorXPath += 'h4[text()="Pac-12"]/../..//li'
       for sel in response.xpath( teamSelectorXPath ):
          teamItem = TeamItem()
-         teamItem[ 'name' ] = sel.xpath( 'h5/a/text()' ).extract()
-         espnIdRegex = '.*?([0-9]+)$'
-         teamItem[ 'espnId' ] = re.match( espnIdRegex,
+         teamIdRegex = '.*?([0-9]+)$'
+         teamItem[ 'teamId' ] = re.match( teamIdRegex,
                                    sel.xpath( 'span/a/@href' ).extract()[0] ).group(1)
+         teamItem[ 'name' ] = sel.xpath( 'h5/a/text()' ).extract()
          yield teamItem
          

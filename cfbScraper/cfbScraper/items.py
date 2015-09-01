@@ -8,11 +8,17 @@
 import scrapy
 
 
-class CfbscraperItem(scrapy.Item):
+class CfbscraperItem( scrapy.Item ):
     # define the fields for your item here like:
     # name = scrapy.Field()
     pass
 
-class TeamItem(scrapy.Item):
+class TeamItem( scrapy.Item ):
+   teamId = scrapy.Field()
    name = scrapy.Field()
-   espnId = scrapy.Field()
+
+class PlayerItem( scrapy.Item ):
+   playerId = scrapy.Field()
+   teamId = scrapy.Field()
+   name = scrapy.Field()
+   position = scrapy.Field()
