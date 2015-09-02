@@ -5,6 +5,9 @@
 - pip install djangorestframework
 - pip install markdown
 - pip install django-filter
+### For user registration bull ###
+- pip install django-registration-redux
+
 
 #Development#
 - python manage.py makemigrations

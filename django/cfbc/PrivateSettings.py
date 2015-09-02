@@ -1,0 +1,3 @@
+raise NotImplementedError
+EMAIL_HOST_USER = 'XXXX'
+EMAIL_HOST_PASSWORD = 'XXXX'

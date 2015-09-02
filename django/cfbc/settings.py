@@ -22,6 +22,15 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = '7q85t81iei_-w$r)c2u%&=57l^l53fxl2n+1c0d6e+6vjiz(_p'
 
+import PrivateSettings as private
+
+EMAIL_USE_TLS = True
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = private.EMAIL_HOST_USER
+EMAIL_HOST_PASSWORD = private.EMAIL_HOST_PASSWORD
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'Pac-12 Football Challenge'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
@@ -38,6 +47,8 @@ LOGIN_REDIRECT_URL = '/'
 # Application definition
 
 INSTALLED_APPS = (
+    'registration',
+    'week1',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -50,6 +61,8 @@ INSTALLED_APPS = (
     'rest_framework',
     'rest_framework.authtoken',
 )
+
+ACCOUNT_ACTIVATION_DAYS = 7
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -67,7 +80,7 @@ ROOT_URLCONF = 'cfbc.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [],
+        'DIRS': [ os.path.join( BASE_DIR, 'cfbc/templates' ) ],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [
