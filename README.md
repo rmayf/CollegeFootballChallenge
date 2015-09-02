@@ -1,12 +1,14 @@
 #Setup#
 - pip install Django=1.8.4
-### For django-rest-framework ###
-##### don't know if we use all of this... #####
+
+###For django-rest-framework###
 - pip install djangorestframework
 - pip install markdown
 - pip install django-filter
-### For user registration bull ###
+
+###For user registration bull###
 - pip install django-registration-redux
+- Add email user and password to PrivateSettings.py
 
 
 #Development#
