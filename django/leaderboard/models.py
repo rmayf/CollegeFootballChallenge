@@ -2,13 +2,8 @@ from django.db import models
 from django.contrib.auth.models import User
 from stats.models import Player, Team, Week
 
-class SeasonPicks( models.Model ):
-   
 class Picks( models.Model ):
-   
-   unique_together = ( ( 'week', 'user' ), )
-
-   week = models.IntegerField( default=0 )
+   week = models.ForeignKey( Week )
    user = models.ForeignKey( User )
    QB1 = models.ForeignKey( Player, related_name='qb1' )
    QB2 = models.ForeignKey( Player, related_name='qb2' )
@@ -26,3 +21,4 @@ class Picks( models.Model ):
    # To fix django admin page plural problem
    class Meta:
       verbose_name_plural = 'picks'
+
