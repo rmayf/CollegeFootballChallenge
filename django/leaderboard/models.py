@@ -3,20 +3,20 @@ from django.contrib.auth.models import User
 from stats.models import Player, Team, Week
 
 class Picks( models.Model ):
-   week = models.ForeignKey( Week )
+   week = models.IntegerField( default=0 )
    user = models.ForeignKey( User )
-   QB1 = models.ForeignKey( Player, related_name='qb1' )
-   QB2 = models.ForeignKey( Player, related_name='qb2' )
-   RB1 = models.ForeignKey( Player, related_name='rb1' )
-   RB2 = models.ForeignKey( Player, related_name='rb2' )
-   WR1 = models.ForeignKey( Player, related_name='wr1' )
-   WR2 = models.ForeignKey( Player, related_name='wr2' )
-   K = models.ForeignKey( Team, related_name='k' )
-   D = models.ForeignKey( Team, related_name='d' )
+   QB1 = models.ForeignKey( Player, related_name='qb1', null=True )
+   QB2 = models.ForeignKey( Player, related_name='qb2', null=True )
+   RB1 = models.ForeignKey( Player, related_name='rb1', null=True )
+   RB2 = models.ForeignKey( Player, related_name='rb2', null=True )
+   WR1 = models.ForeignKey( Player, related_name='wr1', null=True )
+   WR2 = models.ForeignKey( Player, related_name='wr2', null=True )
+   TK = models.ForeignKey( Team, related_name='tk', null=True )
+   TD = models.ForeignKey( Team, related_name='td', null=True )
    score = models.IntegerField( default=0 )
 
    def __str__( self ):
-      return '%s%d' % ( self.user.username, self.week.index )
+      return '%s%d' % ( self.user.username, self.week )
 
    # To fix django admin page plural problem
    class Meta:

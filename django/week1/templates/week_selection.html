@@ -1,0 +1,47 @@
+{% extends "base.html" %}
+
+{% block content %}
+   <div id='welcome-message'>
+      <p> hello {{ user }} </p>
+      <p> sorry this page is so janky, it's still under development </p>
+   </div>
+   <h2> week 1</h2>
+   {% if picks %}
+      <div id='picks-table'>
+         <p> Score: {{ picks.score }} </p>
+         {% cycle 'Quarterback' 'Running Back' 'Wide Receiver' 'Team Kicker' 'Team Defense' as position silent %}
+         <table border="1">
+            <tr>
+               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               {% cycle position %}
+               <td> {{ picks.QB1 }} </td>
+               <td> {{ picks.QB2 }} </td> 
+            </tr>
+            <tr>
+               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               {% cycle position %}
+               <td> {{ picks.RB1 }} </td>
+               <td> {{ picks.RB2 }} </td>
+            </tr>
+            <tr>
+               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               {% cycle position %}
+               <td> {{ picks.WR1 }} </td>
+               <td> {{ picks.WR2 }} </td>
+            </tr>
+            <tr>
+               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               {% cycle position %}
+               <td> {{ picks.TK }} </td>
+            </tr>
+            <tr>
+               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               {% cycle position %}
+               <td> {{ picks.TD }} </td>
+            </tr>
+         </table>
+      </div>
+   {% endif %}
+         {% comment %}<a href="{% url 'manage' %}"> Manage Roster</a>
+      {% endcomment %}
+{% endblock %}
