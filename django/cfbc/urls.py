@@ -22,7 +22,7 @@ from rest_framework.authtoken import views as rest_views
 router = DefaultRouter()
 router.register( r'users', UserViewSet )
 router.register( r'userConfig', UserConfigViewSet )
-router.register( r'picks', PicksViewSet )
+#router.register( r'picks', PicksViewSet )
 
 urlpatterns = [
    url( r'^admin/', include( admin.site.urls ) ),

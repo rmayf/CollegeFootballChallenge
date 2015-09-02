@@ -67,7 +67,7 @@ class UserConfigViewSet( viewsets.ModelViewSet ):
    serializer_class = PrivateUserSerializer
    permission_classes = ( IsAdminUser, )
 
-class PicksViewSet( viewsets.ReadOnlyModelViewSet ):
-   season = Season.objects.get( pk=1 )
-   queryset = Picks.objects.filter( week.index__lt=season.currentWeek )
-   serializer_class = PicksSerializer
+#class PicksViewSet( viewsets.ReadOnlyModelViewSet ):
+#   season = Season.objects.get( pk=1 )
+#   queryset = Picks.objects.filter( week.index__lt=season.currentWeek )
+#   serializer_class = PicksSerializer
