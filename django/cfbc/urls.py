@@ -15,8 +15,17 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
+from rest_framework.routers import DefaultRouter
+from leaderboard.views import *
+from rest_framework.authtoken import views as rest_views
+
+router = DefaultRouter()
+router.register( r'users', UserViewSet )
+router.register( r'userConfig', UserConfigViewSet )
+router.register( r'picks', PicksViewSet )
 
 urlpatterns = [
-   url( r'^chat/', include( 'chat.urls' ) ),
    url( r'^admin/', include( admin.site.urls ) ),
+   url( r'^', include( router.urls ) ),
+   url( r'^auth/', rest_views.obtain_auth_token ), 
 ]

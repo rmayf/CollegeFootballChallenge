@@ -27,6 +27,13 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
+REST_FRAMEWORK = {
+   'DEFAULT_PERMISSION_CLASSES' : [
+      'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'  
+   ]
+}
+
+LOGIN_REDIRECT_URL = '/'
 
 # Application definition
 
@@ -40,6 +47,8 @@ INSTALLED_APPS = (
     'chat',
     'stats',
     'leaderboard',
+    'rest_framework',
+    'rest_framework.authtoken',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -70,6 +79,10 @@ TEMPLATES = [
         },
     },
 ]
+
+#TEMPLATE_DIRS = (
+#   os.path.join(BASE_DIR, 'templates'),
+#)
 
 WSGI_APPLICATION = 'cfbc.wsgi.application'
 
