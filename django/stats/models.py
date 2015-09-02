@@ -24,7 +24,7 @@ class Week( models.Model ):
    
 class Season( models.Model ):
    weeks = models.ForeignKey( Week )
-   currentWeek = IntegerField( default=0 )
+   currentWeek = models.IntegerField( default=0 )
 
 class Player( models.Model ):
    name = models.CharField( max_length=100 )
