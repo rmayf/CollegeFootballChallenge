@@ -28,9 +28,9 @@ class Season( models.Model ):
 
 class Player( models.Model ):
    name = models.CharField( max_length=100 )
-   team = models.ForeignKey( Team )
-   number = models.IntegerField( default=0 )
    position = models.CharField( max_length=20 )
+   teamId = models.IntegerField( default=0 )
+   espnId = models.IntegerField( default=0 )
 
    def __str__( self ):
       return self.name
