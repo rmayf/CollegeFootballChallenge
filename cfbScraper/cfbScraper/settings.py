@@ -8,6 +8,14 @@
 #     http://doc.scrapy.org/en/latest/topics/settings.html
 #     http://scrapy.readthedocs.org/en/latest/topics/downloader-middleware.html
 #     http://scrapy.readthedocs.org/en/latest/topics/spider-middleware.html
+import os
+
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
+import sys
+sys.path.append( os.path.join( BASE_DIR, '../django' ) )
+
+os.environ['DJANGO_SETTINGS_MODULE'] = 'cfbc.settings'
 
 BOT_NAME = 'cfbScraper'
 
