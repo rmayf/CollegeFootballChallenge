@@ -20,5 +20,6 @@ class PlayerSpider(scrapy.Spider):
          playerItem[ 'teamId' ] = teamId
          playerItem[ 'name' ] = sel.xpath( './/td/a/text()' ).extract()
          playerItem[ 'position' ] = sel.xpath( './/td/text()' ).extract()[ 1 ]
-         yield playerItem
+         if playerItem[ 'position' ] in [ 'QB', 'RB', 'WR' ]:
+            yield playerItem
          
