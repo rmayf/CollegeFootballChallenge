@@ -1,0 +1,30 @@
+{% extends "base.html" %}
+
+{% block content %}
+   <h1>{{ position }}</h1>
+   <form>
+   {% csrf_token %}
+   <table border="1">
+      <tr>
+         {% for count in set|first %}
+            <th>{% cycle 'name' 'select' %}</th>
+         {% endfor %}
+      </tr>
+   {% for thingy in set %}
+      <tr>
+         {% for item in thingy %}
+            {% if forloop.last %}
+               <td><input type="checkbox" name="id" value={{ item }}></td>
+            {% else %}
+               <td>{{ item }}</td>
+            {% endif %}
+         {% endfor %}
+      </tr>
+   {% endfor %}
+   </table>
+   <input type="submit" value="Submit" formmethod='POST'>
+   </form>
+   {% comment %}
+   <a href="{% url 'week1_index' %}" >Back</a>
+   {% endcomment %}
+{% endblock %}

@@ -12,30 +12,30 @@
          {% cycle 'Quarterback' 'Running Back' 'Wide Receiver' 'Team Kicker' 'Team Defense' as position silent %}
          <table border="1">
             <tr>
-               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               <td><a href="{% url 'manage_player' 'QB' %}" >{{ position }}</a></td>
                {% cycle position %}
                <td> {{ picks.QB1 }} </td>
                <td> {{ picks.QB2 }} </td> 
             </tr>
             <tr>
-               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               <td><a href="{% url 'manage_player' 'RB' %}" >{{ position }}</a></td>
                {% cycle position %}
                <td> {{ picks.RB1 }} </td>
                <td> {{ picks.RB2 }} </td>
             </tr>
             <tr>
-               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               <td><a href="{% url 'manage_player' 'WR' %}" >{{ position }}</a></td>
                {% cycle position %}
                <td> {{ picks.WR1 }} </td>
                <td> {{ picks.WR2 }} </td>
             </tr>
             <tr>
-               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               <td><a href="{% url 'manage_team' 'TK' %}" >{{ position }}</a></td>
                {% cycle position %}
                <td> {{ picks.TK }} </td>
             </tr>
             <tr>
-               <td><a href="{% url 'manage' position %}" >{{ position }}</a></td>
+               <td><a href="{% url 'manage_team' 'TD' %}" >{{ position }}</a></td>
                {% cycle position %}
                <td> {{ picks.TD }} </td>
             </tr>
