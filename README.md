@@ -10,6 +10,10 @@
 - pip install django-registration-redux
 - Add email user and password to PrivateSettings.py
 
+###Scrapy###
+- pip install scrapy
+- pip install scrapy-djangoitem
+
 
 #Development#
 - python manage.py makemigrations

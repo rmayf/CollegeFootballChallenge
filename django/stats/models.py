@@ -23,7 +23,7 @@ class Week( models.Model ):
       return 'Week%d' % self.index
    
 class Season( models.Model ):
-   weeks = models.ForeignKey( Week )
+   #weeks = models.ForeignKey( Week )
    currentWeek = models.IntegerField( default=0 )
 
 class Player( models.Model ):
@@ -52,7 +52,7 @@ class PlayerStat( models.Model ):
    receptions = models.IntegerField( default=0 )
 
    def __str__( self ):
-      return self.player.name
+      return self.player.name.encode( 'ascii', 'ignore' )
 
 class TeamStat( models.Model ):
    team = models.ForeignKey( Team )
@@ -63,4 +63,4 @@ class TeamStat( models.Model ):
    pointsAllowed = models.IntegerField( default=0 )
 
    def __str__( self ):
-      return self.team.name
+      return self.team.name.encode( 'ascii', 'ignore' )
