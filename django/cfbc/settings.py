@@ -42,7 +42,16 @@ REST_FRAMEWORK = {
    ]
 }
 
+#LOGIN_REDIRECT_URL = '/'
+LOGIN_URL          = '/login/'
 LOGIN_REDIRECT_URL = '/'
+SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = private.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY 
+SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = private.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET 
+SOCIAL_AUTH_FACEBOOK_KEY = private.SOCIAL_AUTH_FACEBOOK_KEY
+SOCIAL_AUTH_FACEBOOK_SECRET = private.SOCIAL_AUTH_FACEBOOK_SECRET
+SOCIAL_AUTH_TWITTER_KEY = private.SOCIAL_AUTH_TWITTER_KEY 
+SOCIAL_AUTH_TWITTER_SECRET = private.SOCIAL_AUTH_TWITTER_SECRET 
+
 
 # Application definition
 
@@ -60,9 +69,18 @@ INSTALLED_APPS = (
     'leaderboard',
     'rest_framework',
     'rest_framework.authtoken',
+    'social.apps.django_app.default',
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7
+
+AUTHENTICATION_BACKENDS = (
+   'django.contrib.auth.backends.ModelBackend',
+   'social.backends.twitter.TwitterOAuth',
+   'social.backends.facebook.FacebookOAuth2',
+   'social.backends.google.GoogleOAuth2',
+
+)
 
 MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',

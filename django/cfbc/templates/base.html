@@ -1,0 +1,82 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
+
+   <head>
+      <title>{% block title %}Pac-12 Football Challenge{% endblock %}</title>
+      <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
+      <meta name="viewport" content="width=device-width, initial-scale=1">
+      <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+      <script src="https://fb.me/react-0.13.3.js"></script>
+      <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+   </head>
+
+   <body>
+      <div id="header">
+         <!-- 
+         <h1>Pac-12 Football Challenge</h1>
+         <a href="{% url 'auth_login' %}" >Login</a> |
+         <a href="{% url 'auth_logout' %}" >Logout</a>
+         -->
+      </div>
+      {% if request.user.is_authenticated %}
+         <p> hello {{ user }} </p>
+         <a href="{% url 'auth_logout' %}">Logout</a>
+      {% else %}
+         <a href="{% url "social:begin" "google-oauth2" %}"><img src="/static/btn_google+_signin_dark_normal_web.png"></a>
+         <a href="{% url "social:begin" "facebook" %}"><img src="/static/fb_medium.png"></a>
+         <!-- <a href="{% url "social:begin" "twitter" %}">tw</a> -->
+      {% endif %}
+      <script type="text/jsx">
+         var Header = React.createClass( {
+            render: function() {
+               var mapLinks = this.props.links.map( function( link ) {
+                  return (
+                     <li className="pure-menu-item">{ link }</li>
+                  )
+               } )
+               return (
+                  <div className="header">
+                     <div className="pure-menu pure-menu-horizontal pure-menu-fixed">
+                        <a className="pure-menu-heading" href="/">{ this.props.title }</a>
+                        <ul className="pure-menu-list">
+                           { mapLinks }
+                        </ul>
+                     </div>
+                  </div>
+               )
+            }
+         } )
+
+         var Link = React.createClass({
+            render: function() {
+               return (
+                  <a className="pure-menu-link" href={ this.props.url } >{ this.props.text }</a>
+               )
+            }
+         } )
+
+         var links = [
+            //<Link url="/" text="Home" />,
+            <Link url="/about" text="About" />,
+            <Link url="/manage" text="Manage" />,
+            //<Link url="/settings" text="Settings" />,
+            <Link url="/accounts/register" text="Sign Up" />,
+         ]
+
+         React.render(
+            <Header title="College Football Challenge" links={ links }>
+            </Header>,
+            document.getElementById( 'header' )
+         )
+      </script>
+      <div id="content">
+         {% block content %}{% endblock %}
+      </div>
+
+      <div id="footer">
+         {% block footer %}
+         {% endblock %}
+      </div>
+   </body>
+</html>

@@ -7,7 +7,7 @@
    <table border="1">
       <tr>
          {% for count in set|first %}
-            <th>{% cycle 'name' 'team' 'number' 'position' 'select' %}</th>
+            <th>{% cycle 'name' 'team' 'position' 'select' %}</th>
          {% endfor %}
       </tr>
    {% for thingy in set %}

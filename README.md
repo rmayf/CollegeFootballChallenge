@@ -1,5 +1,6 @@
 #Setup#
 - pip install Django=1.8.4
+- pip install python-social-auth
 
 ###For django-rest-framework###
 - pip install djangorestframework

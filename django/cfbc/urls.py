@@ -25,6 +25,7 @@ router = DefaultRouter()
 #router.register( r'picks', PicksViewSet )
 
 urlpatterns = [
+   url('', include('social.apps.django_app.urls', namespace='social')),
    url( r'^accounts/', include( 'registration.backends.default.urls' ) ),
    url( r'^', include( week1_urls ) ),
    url( r'^admin/', include( admin.site.urls ) ),

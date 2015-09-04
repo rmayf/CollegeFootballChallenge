@@ -7,6 +7,9 @@ from django.http import Http404
 
 from django.http import HttpResponseRedirect
 
+def login( req ):
+   return render( req, 'base.html', )
+
 def fail( req ):
    return render( req, 'fail.html', )
 
@@ -91,7 +94,7 @@ def roster_player( req, position, **kwargs ):
       return HttpResponseRedirect( '/' )
    else:
       #I know, I know... this is terrible 
-      objs = Player.objects.filter( position=position ).values_list( 'name', 'team__name',
-                                                                     'number', 'position', 'id' )
+      objs = Player.objects.filter( position=position ).values_list( 'name', 'teamId',
+                                                                     'position', 'id' )
       context = { 'set' : objs, 'position': position }
       return render( req, 'player.html', context )
