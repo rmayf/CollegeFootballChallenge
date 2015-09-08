@@ -1,5 +1,4 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
-    "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
    <head>
@@ -7,76 +6,57 @@
       <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/pure-min.css">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <link rel="stylesheet" href="http://yui.yahooapis.com/pure/0.6.0/grids-responsive-min.css">
+      <!--
       <script src="https://fb.me/react-0.13.3.js"></script>
       <script src="https://fb.me/JSXTransformer-0.13.3.js"></script>
+      -->
+      <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.4.0/css/font-awesome.min.css">
    </head>
 
    <body>
-      <div id="header">
-         <!-- 
-         <h1>Pac-12 Football Challenge</h1>
-         <a href="{% url 'auth_login' %}" >Login</a> |
-         <a href="{% url 'auth_logout' %}" >Logout</a>
-         -->
+      <div class="pure-menu pure-menu-horizontal pure-menu-fixed">
+         <a class="pure-menu-heading" href="/">College Football Challenge</a>
+         <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-has-children pure-menu-allow-hover">
+               {% if request.user.is_authenticated %}
+                  <a href="#" class="pure-menu-link">{{ user }}</a>
+                  <ul class="pure-menu-children">
+                     <li class="pure-menu-item">
+                        <a class="pure-menu-link" href="/accounts/settings">
+                           <i class="fa fa-cog fa-fw"></i>Settings
+                        </a>
+                     </li>
+                     <li class="pure-menu-item">
+                        <a class="pure-menu-link" href="/accounts/logout">
+                           <i class="fa fa-sign-out fa-fw"></i>Sign Out
+                        </a>
+                     </li>
+                  </ul>
+               {% else %}
+                  <a href="#" class="pure-menu-link">Sign In</a>
+                  <ul class="pure-menu-children">
+                     <li class="pure-menu-item">
+                        <a class="pure-menu-link" href="{% url "social:begin" "google-oauth2" %}" >
+                           <i class="fa fa-google fa-fw"></i>Google
+                        </a>
+                     </li>
+                     <li class="pure-menu-item">
+                        <a class="pure-menu-link" href="{% url "social:begin" "facebook" %}" >
+                           <i class="fa fa-facebook fa-fw"></i>Facebook
+                        </a>
+                     </li>
+                     <li class="pure-menu-item">
+                        <a class="pure-menu-link" href="/accounts/login">
+                           <i class="fa fa-at fa-fw"></i>Email
+                        </a>
+                     </li>
+                  </ul>
+               {% endif %}
+            </li>
+         </ul>
       </div>
-      {% if request.user.is_authenticated %}
-         <p> hello {{ user }} </p>
-         <a href="{% url 'auth_logout' %}">Logout</a>
-      {% else %}
-         <a href="{% url "social:begin" "google-oauth2" %}"><img src="/static/btn_google+_signin_dark_normal_web.png"></a>
-         <a href="{% url "social:begin" "facebook" %}"><img src="/static/fb_medium.png"></a>
-         <!-- <a href="{% url "social:begin" "twitter" %}">tw</a> -->
-      {% endif %}
-      <script type="text/jsx">
-         var Header = React.createClass( {
-            render: function() {
-               var mapLinks = this.props.links.map( function( link ) {
-                  return (
-                     <li className="pure-menu-item">{ link }</li>
-                  )
-               } )
-               return (
-                  <div className="header">
-                     <div className="pure-menu pure-menu-horizontal pure-menu-fixed">
-                        <a className="pure-menu-heading" href="/">{ this.props.title }</a>
-                        <ul className="pure-menu-list">
-                           { mapLinks }
-                        </ul>
-                     </div>
-                  </div>
-               )
-            }
-         } )
-
-         var Link = React.createClass({
-            render: function() {
-               return (
-                  <a className="pure-menu-link" href={ this.props.url } >{ this.props.text }</a>
-               )
-            }
-         } )
-
-         var links = [
-            //<Link url="/" text="Home" />,
-            <Link url="/about" text="About" />,
-            <Link url="/manage" text="Manage" />,
-            //<Link url="/settings" text="Settings" />,
-            <Link url="/accounts/register" text="Sign Up" />,
-         ]
-
-         React.render(
-            <Header title="College Football Challenge" links={ links }>
-            </Header>,
-            document.getElementById( 'header' )
-         )
-      </script>
       <div id="content">
          {% block content %}{% endblock %}
-      </div>
-
-      <div id="footer">
-         {% block footer %}
-         {% endblock %}
       </div>
    </body>
 </html>
