@@ -2,13 +2,14 @@ from django.db import models
 
 class Team( models.Model ):
    name = models.CharField( max_length=100 )
-   espnId = models.IntegerField( default=0 )
+   teamId = models.IntegerField( default=0 )
 
    def __str__( self ):
       return self.name
 
 class Game( models.Model ):
    team = models.ForeignKey( Team, related_name='team' )
+   week = models.IntegerField( default=0 )
    opponent = models.ForeignKey( Team, related_name='opponent' )
    date = models.DateTimeField()
 
@@ -17,7 +18,7 @@ class Game( models.Model ):
 
 class Week( models.Model ):
    index = models.IntegerField( default=0 )
-   games = models.ForeignKey( Game )
+   #games = models.ForeignKey( Game )
 
    def __str__( self ):
       return 'Week%d' % self.index
@@ -37,6 +38,7 @@ class Player( models.Model ):
 
 class PlayerStat( models.Model ):
    player = models.ForeignKey( Player )
+   week = models.IntegerField( default=0 )
    completions = models.IntegerField( default=0 )
    attempts = models.IntegerField( default=0 )
    passingYards = models.IntegerField( default=0 )
@@ -50,17 +52,20 @@ class PlayerStat( models.Model ):
    interceptionsTD = models.IntegerField( default=0 )
    interceptions = models.IntegerField( default=0 )
    receptions = models.IntegerField( default=0 )
+   score = models.IntegerField( default=0 )
 
    def __str__( self ):
       return self.player.name.encode( 'ascii', 'ignore' )
 
 class TeamStat( models.Model ):
    team = models.ForeignKey( Team )
+   week = models.IntegerField( default=0 )
    FG = models.IntegerField( default=0 )
    FGAttempts = models.IntegerField( default=0 )
    PAT = models.IntegerField( default=0 )
    PATAttempts = models.IntegerField( default=0 )
    pointsAllowed = models.IntegerField( default=0 )
+   score = models.IntegerField( default=0 )
 
    def __str__( self ):
       return self.team.name.encode( 'ascii', 'ignore' )

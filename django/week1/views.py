@@ -1,11 +1,63 @@
 from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
+from django.contrib.auth.models import User
 from django.views.decorators.http import require_safe
 from leaderboard.models import Picks
-from stats.models import Player, Team, Season
+from stats.models import Player, Team, Season, PlayerStat, TeamStat, Game
 from django.http import Http404
 
 from django.http import HttpResponseRedirect
+from django.utils import timezone
+
+def inDepth( req, week ):
+   def helper_player( player ):
+      if player:
+         playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
+         team = Team.objects.get( teamId=player.teamId )
+         game = Game.objects.get( team=team, week=week )
+         if game.date <= timezone.now() or pick.user == req.user:
+            return { 'name': player.name, 'school': team.teamId, 'score': playerStat.score }
+      else:
+         return None
+
+   def helper_team( team ):
+      if team:
+         teamStat = TeamStat.objects.get_or_create( team=team, week=week )[ 0 ]
+         game = Game.objects.get( team=team, week=week )
+         if game.date <= timezone.now() or pick.user == req.user:
+            return { 'name': team.name, 'school': team.teamId, 'score': teamStat.score }
+      else:
+         return None
+      
+   data = []
+   for pick in Picks.objects.filter( week=week ).order_by( 'score' ):
+      pickList = []
+      pickList.append( helper_player( pick.QB1 ) )
+      pickList.append( helper_player( pick.QB2 ) )
+      pickList.append( helper_player( pick.RB1 ) )
+      pickList.append( helper_player( pick.RB2 ) )
+      pickList.append( helper_player( pick.WR1 ) )
+      pickList.append( helper_player( pick.WR2 ) )
+      pickList.append( helper_team( pick.TD ) )
+      pickList.append( helper_team( pick.TK ) )
+      data.append( { 'name': pick.user.username, 'picks': pickList, 'score': pick.score } )
+
+   context = { 'data': data }
+   return render( req, 'inDepth.html', context )
+
+
+@login_required
+def settings( req ):
+   if req.method == 'POST':
+      uname = req.POST.get( 'username', None )
+      if uname:
+         req.user.username = uname
+         req.user.save()
+         return HttpResponseRedirect( '/' )
+      else:
+         raise Http404( 'No username specified' ) 
+   else:
+      return render( req, 'settings.html', )
 
 def login( req ):
    return render( req, 'base.html', )
@@ -16,8 +68,26 @@ def fail( req ):
 def success( req ):
    return render( req, 'success.html', )
 
-@login_required
-@require_safe
+def leaderboard( req ):
+   toTemp = []
+   for user in User.objects.filter( is_superuser=False, is_active=True, is_staff=False ):
+      userPicks = Picks.objects.filter( user=user ).order_by( 'week' )
+      total = 0
+      scores = []
+      for picks in userPicks:
+         total += picks.score
+      dataIndex = 0
+      for i in range( 1, 14 ):
+         if dataIndex < len( userPicks ):
+            if userPicks[ dataIndex ].week == i:
+               scores.append( userPicks[ dataIndex ].score )
+               dataIndex += 1
+         else:
+            scores.append( '-' )
+      toTemp.append( { 'name': user.username, 'total': total, 'scores': scores } )
+   context = { 'data': toTemp }
+   return render( req, 'leaderboard.html', context )
+
 def index( req ):
    week = 1
    try:

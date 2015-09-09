@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block content %}
+   <form class="pure-form pure-form-aligned">
+      {% csrf_token %}
+      <fieldset>
+         <legend>Settings</legend>
+         <div class="pure-control-group">
+            <label for="name">Username</label>
+            <input id="name" type="text" placeholder="Username" name='username' required>
+         </div>
+         <div class="pure-controls">
+            <a class="pure-button button-error" href="/">Cancel</a>
+            <button type="submit" class="pure-button pure-button-primary" formmethod='POST'>Save</button>
+         </div>
+      </fieldset>
+   </form>
+{% endblock %}
