@@ -16,7 +16,7 @@ def inDepth( req, week ):
          team = Team.objects.get( teamId=player.teamId )
          game = Game.objects.get( team=team, week=week )
          if game.date <= timezone.now() or pick.user == req.user:
-            return { 'name': player.name, 'school': team.teamId, 'score': playerStat.score }
+            return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
       else:
          return None
 
@@ -25,7 +25,7 @@ def inDepth( req, week ):
          teamStat = TeamStat.objects.get_or_create( team=team, week=week )[ 0 ]
          game = Game.objects.get( team=team, week=week )
          if game.date <= timezone.now() or pick.user == req.user:
-            return { 'name': team.name, 'school': team.teamId, 'score': teamStat.score }
+            return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
       else:
          return None
       
