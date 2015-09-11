@@ -36,12 +36,6 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-REST_FRAMEWORK = {
-   'DEFAULT_PERMISSION_CLASSES' : [
-      'rest_framework.permissions.DjangoModelPermissionsOrAnonReadOnly'  
-   ]
-}
-
 #LOGIN_REDIRECT_URL = '/'
 LOGIN_URL          = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/'
@@ -67,8 +61,6 @@ INSTALLED_APPS = (
     'chat',
     'stats',
     'leaderboard',
-    'rest_framework',
-    'rest_framework.authtoken',
     'social.apps.django_app.default',
 )
 

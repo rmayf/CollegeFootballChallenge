@@ -15,20 +15,11 @@ Including another URLconf
 """
 from django.conf.urls import include, url
 from django.contrib import admin
-from rest_framework.routers import DefaultRouter
-from rest_framework.authtoken import views as rest_views
 from week1 import urls as week1_urls
-
-router = DefaultRouter()
-#router.register( r'users', UserViewSet )
-#router.register( r'userConfig', UserConfigViewSet )
-#router.register( r'picks', PicksViewSet )
 
 urlpatterns = [
    url('', include('social.apps.django_app.urls', namespace='social')),
    url( r'^accounts/', include( 'registration.backends.default.urls' ) ),
    url( r'^', include( week1_urls ) ),
    url( r'^admin/', include( admin.site.urls ) ),
-   #url( r'^', include( router.urls ) ),
-   #url( r'^auth/', rest_views.obtain_auth_token ), 
 ]
