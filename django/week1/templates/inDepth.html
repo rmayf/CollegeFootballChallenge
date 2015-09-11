@@ -1,5 +1,30 @@
 {% extends "base.html" %}
 
 {% block content %}
-   <p>{{ data }}</p>
+   <table class="pure-table">
+      <thead>
+	 <th>Name</th>
+	 <th colspan="2">Quarterbacks</th>
+	 <th colspan="2">Runningbacks</th>
+	 <th colspan="2">Wide Receivers</th>
+	 <th>Team Defense</th>
+	 <th>Team Kicking</th>
+	 <th>Score</th>
+      </thead>
+      <tbody>
+	 {% for line in data|dictsortreversed:"score" %}
+	    <tr>
+	       <td>{{ line.name }}</td>
+	       {% for player in line.picks %}
+		  {% if player or score == 0 %}
+		     <td><img src="/static/{{ player.school}}.png/">{{ player.name }} {{ player.score }}</td>
+		  {% else %}
+		     <td>-</td>
+		  {% endif %}
+	       {% endfor %}
+	       <td>{{ line.score }}</td>
+	    </tr>
+	 {% endfor %}
+      <tbody>
+   </table>
 {% endblock %}
