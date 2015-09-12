@@ -8,13 +8,13 @@ class Team( models.Model ):
       return self.name
 
 class Game( models.Model ):
-   team = models.ForeignKey( Team, related_name='team' )
+   awayTeamId = models.IntegerField( default=0 )
+   homeTeamId = models.IntegerField( default=0 )
    week = models.IntegerField( default=0 )
-   opponent = models.ForeignKey( Team, related_name='opponent' )
    date = models.DateTimeField()
 
    def __str__( self ):
-      return '%s@%s' % ( self.opponent, self.team )
+      return '%s@%s' % ( self.awayTeamId, self.homeTeamId )
 
 class Week( models.Model ):
    index = models.IntegerField( default=0 )
