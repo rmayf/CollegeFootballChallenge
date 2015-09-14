@@ -23,7 +23,6 @@ class RosterSpider(scrapy.Spider):
    allowed_domains = ["espn.com"]
    start_urls = [ "http://espn.go.com/college-football/teams" ]
    
-
    def parse(self, response):
       teamSelectorXPath = '//div[@class="mod-container mod-open-list '
       teamSelectorXPath += 'mod-teams-list-medium mod-no-footer"]/'
