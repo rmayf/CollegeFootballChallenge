@@ -15,3 +15,6 @@ Don't forget to comment out NotImplementedError!
 - python manage.py makemigrations
 - python manage.py migrate
 - python manage.py runserver [ip address]:[port]
+
+#Database Access#
+- sqlite3 db.sqlite3

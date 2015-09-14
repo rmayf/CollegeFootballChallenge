@@ -8,8 +8,8 @@ class Team( models.Model ):
       return self.name
 
 class Game( models.Model ):
-   awayTeamId = models.IntegerField( default=0 )
-   homeTeamId = models.IntegerField( default=0 )
+   teamId = models.IntegerField( default=0 )
+   opponentTeamId = models.IntegerField( default=0 )
    week = models.IntegerField( default=0 )
    date = models.DateTimeField()
 

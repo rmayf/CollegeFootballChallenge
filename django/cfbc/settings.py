@@ -50,7 +50,7 @@ SOCIAL_AUTH_TWITTER_SECRET = private.SOCIAL_AUTH_TWITTER_SECRET
 # Application definition
 
 INSTALLED_APPS = (
-#     'registration',
+    'registration',
     'week1',
     'django.contrib.admin',
     'django.contrib.auth',
@@ -60,9 +60,8 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'chat',
     'stats',
-#     'leaderboard',
-    'rest_framework',
-    'rest_framework.authtoken',
+#    'leaderboard',
+    'social.apps.django_app.default',
 )
 
 ACCOUNT_ACTIVATION_DAYS = 7
