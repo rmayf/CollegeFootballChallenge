@@ -57,11 +57,7 @@ class RosterSpider(scrapy.Spider):
          team = Team.objects.get( teamId=teamId )
          opponentUrl = sel.xpath( './/td' )[ 1 ].xpath( './/a/@href' ).extract()[ 0 ]
          opponentTeamId = re.match( urlNumRegex, opponentUrl ).group( 1 )
-         try:
-            opponent = Team.objects.get( teamId=opponentTeamId, )
-         except:
-            import pdb
-            pdb.set_trace()
+         opponent = Team.objects.get( teamId=opponentTeamId, )
          dateString = unicodedata.normalize( 'NFKD', sel.xpath( './/td/text()' ) \
                          .extract()[ 0 ] ).encode( 'ascii', 'ignore' )
          date = datetime.date( currentYear, monthStrDict[ dateString.split()[ 1 ] ],
