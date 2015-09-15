@@ -3,6 +3,9 @@ import re
 import scrapy
 import unicodedata
 from cfbScraper.items import GameItem, PlayerItem, TeamItem
+from stats.models import Game, Player, Team
+import django
+django.setup()
 
 currentYear = 2015
 monthStrDict = { 'Aug' : 8, 'Sept' : 9, 'Oct' : 10, 'Nov' : 11, 'Dec' : 12 }
@@ -24,43 +27,48 @@ class RosterSpider(scrapy.Spider):
    start_urls = [ "http://espn.go.com/college-football/teams" ]
    
    def parse(self, response):
-      teamSelectorXPath = '//div[@class="mod-container mod-open-list '
-      teamSelectorXPath += 'mod-teams-list-medium mod-no-footer"]/'
-      teamSelectorXPath +=  'div[@class="mod-header colhead"]/'
-      teamSelectorXPath += 'h4[text()="Pac-12"]/../..//li'
-      for sel in response.xpath( teamSelectorXPath ):
-         teamItem = TeamItem()
-         teamIdRegex = '.*?([0-9]+)$'
-         scheduleUrl = sel.xpath( 'span/a/@href' ).extract()[ 1 ]
-         rosterUrl = sel.xpath( 'span/a/@href' ).extract()[ 2 ]
-         teamId = re.match( teamIdRegex, rosterUrl ).group(1)
-         teamItem[ 'teamId' ] = teamId
-         teamItem[ 'name' ] = sel.xpath( 'h5/a/text()' ).extract()
-         yield teamItem
-         request = scrapy.Request( 'http://espn.go.com' + scheduleUrl,
-                               callback=self.parseScheduleUrl,
-                               dont_filter=True )
-         request.meta[ 'teamId' ] = teamId
-         yield request 
-         yield scrapy.Request( 'http://espn.go.com' + rosterUrl,
-                               callback=self.parseRosterUrl,
-                               dont_filter=True )
+      for confSel in response.xpath( "//div[ @class='mod-header colhead' ]" ):
+         conference = confSel.xpath( 'h4/text()' ).extract()[ 0 ]
+         for team in confSel.xpath( '..//li' ):
+            teamIdRegex = '.*?([0-9]+)$'
+            links = team.xpath( 'span/a/@href' ).extract()
+            scheduleUrl = links[ 1 ]
+            teamId = re.match( teamIdRegex, scheduleUrl ).group( 1 )
+            name = team.xpath( 'h5/a/text()' ).extract()[ 0 ]
+            teamItem = Team.objects.get_or_create( teamId=teamId, name=name,
+                                                   conference=conference )
+            # only grab player and schedule data from pac12 teams
+            if conference.startswith( 'Pac-12' ):
+               rosterUrl = links[ 2 ]
+               request = scrapy.Request( 'http://espn.go.com' + scheduleUrl,
+                                     callback=self.parseScheduleUrl,
+                                     dont_filter=True )
+               request.meta[ 'teamId' ] = teamId
+               yield request 
+               yield scrapy.Request( 'http://espn.go.com' + rosterUrl,
+                                     callback=self.parseRosterUrl,
+                                     dont_filter=True )
    
    def parseScheduleUrl(self, response):
       urlNumRegex = '.*?([0-9]+)'
       gameSelectorXPath = '//table[@class="tablehead"]/tr'
       for sel in response.xpath( gameSelectorXPath )[ 2 : ]:
-         gameItem = GameItem()
-         gameItem[ 'teamId' ] =  response.meta[ 'teamId' ]
+         teamId =  response.meta[ 'teamId' ]
+         team = Team.objects.get( teamId=teamId )
          opponentUrl = sel.xpath( './/td' )[ 1 ].xpath( './/a/@href' ).extract()[ 0 ]
-         gameItem[ 'opponentTeamId' ] = re.match( urlNumRegex, opponentUrl ).group( 1 )
+         opponentTeamId = re.match( urlNumRegex, opponentUrl ).group( 1 )
+         try:
+            opponent = Team.objects.get( teamId=opponentTeamId, )
+         except:
+            import pdb
+            pdb.set_trace()
          dateString = unicodedata.normalize( 'NFKD', sel.xpath( './/td/text()' ) \
                          .extract()[ 0 ] ).encode( 'ascii', 'ignore' )
          date = datetime.date( currentYear, monthStrDict[ dateString.split()[ 1 ] ],
                                int( dateString.split()[ 2 ] ) )
-         gameItem[ 'week' ] = getGameWeek( date )
-         gameItem[ 'date' ] = date 
-         yield gameItem 
+         week = getGameWeek( date )
+         game = Game.objects.get_or_create( team=team, opponent=opponent,
+                                            date=date, week=week )
          
    def parseRosterUrl(self, response):
       playerSelectorXPath = '//table[@class="tablehead"]/tr'
@@ -68,11 +76,10 @@ class RosterSpider(scrapy.Spider):
       urlNumRegex = '.*?([0-9]+)'
       teamId = re.match( urlNumRegex, teamSel.xpath( './/a/@href' ).extract()[ 0 ] ).group( 1 )
       for sel in response.xpath( playerSelectorXPath )[ 2 : ]:
-         playerItem = PlayerItem()
          playerUrl = sel.xpath( './/td' )[ 1 ].xpath( './/a/@href' ).extract()[ 0 ]
-         playerItem[ 'name' ] = sel.xpath( './/td/a/text()' ).extract()
-         playerItem[ 'position' ] = sel.xpath( './/td/text()' ).extract()[ 1 ]
-         playerItem[ 'teamId' ] = teamId
-         playerItem[ 'espnId' ] = re.match( urlNumRegex, playerUrl ).group( 1 )
-         if playerItem[ 'position' ] in [ 'QB', 'RB', 'WR' ]:
-            yield playerItem
+         name = sel.xpath( './/td/a/text()' ).extract()[ 0 ]
+         position = sel.xpath( './/td/text()' ).extract()[ 1 ]
+         team = Team.objects.get( teamId=teamId )
+         espnId = re.match( urlNumRegex, playerUrl ).group( 1 )
+         if position in [ 'QB', 'RB', 'WR' ]:
+            player = Player.objects.get_or_create( name=name, position=position, espnId=espnId, team=team )

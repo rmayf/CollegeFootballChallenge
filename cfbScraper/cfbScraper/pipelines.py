@@ -7,12 +7,12 @@
 
 from stats.models import Player, Team
 
-class PlayerPipeline( object ):
-   def process_item( self, item, spider ):
-      item.save()
-      return item
-
-class TeamPipeline( object ):
-   def process_item( self, item, spider ):
-      item.save()
-      return item
+#class PlayerPipeline( object ):
+#   def process_item( self, item, spider ):
+#      item.save()
+#      return item
+#
+#class TeamPipeline( object ):
+#   def process_item( self, item, spider ):
+#      item.save()
+#      return item

@@ -70,8 +70,8 @@ NEWSPIDER_MODULE = 'cfbScraper.spiders'
 # Configure item pipelines
 # See http://scrapy.readthedocs.org/en/latest/topics/item-pipeline.html
 ITEM_PIPELINES = {
-    'cfbScraper.pipelines.TeamPipeline': 300,
-    'cfbScraper.pipelines.PlayerPipeline': 200,
+    #'cfbScraper.pipelines.TeamPipeline': 300,
+    #'cfbScraper.pipelines.PlayerPipeline': 200,
 }
 
 # Enable and configure the AutoThrottle extension (disabled by default)

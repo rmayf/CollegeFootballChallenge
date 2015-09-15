@@ -60,7 +60,7 @@ INSTALLED_APPS = (
     'django.contrib.staticfiles',
     'chat',
     'stats',
-#    'leaderboard',
+    'leaderboard',
     'social.apps.django_app.default',
 )
 

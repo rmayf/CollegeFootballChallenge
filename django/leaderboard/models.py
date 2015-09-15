@@ -5,8 +5,6 @@ from django.contrib.auth.models import User
 
 class UserStat(models.Model):
    user = models.OneToOneField(User)
-   for i in range( 1, 13 ):
-      print i
 
 
 class Picks( models.Model ):
