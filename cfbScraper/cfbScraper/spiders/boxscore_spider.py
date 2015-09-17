@@ -11,7 +11,10 @@ class BoxscoreSpider(scrapy.Spider):
 
    def parsePlayerPassing( self, playerPassingSel ):
       playerUrl = playerPassingSel.xpath( './/a/@href' ).extract()[ 0 ]
-      player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
+      try:
+         player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
+      except Player.DoesNotExist:
+         return
       week = -1 # TODO
       m = re.match( '([0-9]+)\/([0-9]+)', playerPassingSel \
                                              .xpath( ".//td[ @class='c-att' ]/text()" ) \
@@ -24,21 +27,52 @@ class BoxscoreSpider(scrapy.Spider):
       playerStat = PlayerStat.objects.get_or_create( player=player, week=week,
                       completions=completions, attempts=attempts, passingYards=passingYards,
                       passingTD=passingTD, thrownInterceptions=thrownInterceptions )
+ 
+   def parsePlayerRushing( self, playerRushingSel ):
+      playerUrl = playerRushingSel.xpath( './/a/@href' ).extract()[ 0 ]
+      try:
+         player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
+      except Player.DoesNotExist:
+         return
+      week = -1 # TODO
+      TD = playerRushingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ]
+      carries = playerRushingSel.xpath( ".//td[ @class='car' ]/text()" ).extract()[ 0 ]
+      yards = playerRushingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ]
+      playerStat = PlayerStat.objects.get_or_create( player=player, week=week, TD=TD,
+                                                     carries=carries, yards=yards )
+
+   def parsePlayerReceiving( self, playerReceivingSel ):
+      playerUrl = playerReceivingSel.xpath( './/a/@href' ).extract()[ 0 ]
+      try:
+         player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
+      except Player.DoesNotExist:
+         return
+      week = -1 # TODO
+      TD = playerReceivingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ]
+      yards = playerReceivingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ]
+      playerStat = PlayerStat.objects.get_or_create( player=player, week=week, TD=TD,
+                                                     yards=yards )
    
    def parseTeamPassing( self, teamPassingSel ):
       for playerPassingSel in teamPassingSel.xpath( ".//tr" )[ : -1 ]:
          self.parsePlayerPassing( playerPassingSel )
+
+   def parseTeamRushing( self, teamRushingSel ):
+      for playerRushingSel in teamRushingSel.xpath( ".//tr" )[ : -1 ]:
+         self.parsePlayerRushing( playerRushingSel )
+   
+   def parseTeamReceiving( self, teamReceivingSel ):
+      for playerReceivingSel in teamReceivingSel.xpath( ".//tr" )[ : -1 ]:
+         self.parsePlayerReceiving( playerReceivingSel )
    
    def parse(self, response):
       boxscoresSel = response.xpath( "//article[ @data-behavior='boxscore_tabs' ]" )
-      passingSel = boxscoresSel.xpath( ".//div[ @id='gamepackage-passing' ]" )
-      self.parseTeamPassing( passingSel.xpath( ".//tbody" )[ 1 ] ) # TODO: temp until below todo is resolved 
-      # TODO: for OOC games, need to somehow skip processing if player ID is not found in DB
-      #for teamPassingSel in passingSel.xpath( ".//tbody" ):
-      #   self.parseTeamPassing( teamPassingSel )
-      #  parsePassing( boxscoresSel.xpath( ".//div[ @id='gamepackage-passing' ]" ) )
-      #  parseRushing( boxscoresSel.xpath( ".//div[ @id='gamepackage-rushing' ]" ) )
-      #  parseReceiving( boxscoresSel.xpath( ".//div[ @id='gamepackage-receiving' ]" ) )
+      for teamPassingSel in boxscoresSel.xpath( ".//div[ @id='gamepackage-passing' ]//tbody" ):
+         self.parseTeamPassing( teamPassingSel )
+      for teamRushingSel in boxscoresSel.xpath( ".//div[ @id='gamepackage-rushing' ]//tbody" ):
+         self.parseTeamRushing( teamRushingSel )
+      for teamReceivingSel in boxscoresSel.xpath( ".//div[ @id='gamepackage-receiving' ]//tbody" ):
+         self.parseTeamReceiving( teamReceivingSel )
       #  parseInterceptions( boxscoresSel.xpath( ".//div[ @id='gamepackage-interceptions' ]" ) )
       #  parseKickReturns( boxscoresSel.xpath( ".//div[ @id='gamepackage-kickReturns' ]" ) )
       #  parsePuntReturns( boxscoresSel.xpath( ".//div[ @id='gamepackage-puntReturns' ]" ) )
