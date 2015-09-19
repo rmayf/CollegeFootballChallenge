@@ -57,6 +57,9 @@ class PlayerStat( models.Model ):
    puntTD = models.IntegerField( default=0 )
    interceptionsTD = models.IntegerField( default=0 )
    interceptions = models.IntegerField( default=0 )
+   # PK-specific
+   extraPoints = models.IntegerField( default=0 )
+   fieldGoals = models.IntegerField( default=0 )
    # Final calculted score
    score = models.IntegerField( default=0 )
 

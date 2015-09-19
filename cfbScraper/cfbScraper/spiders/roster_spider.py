@@ -77,5 +77,5 @@ class RosterSpider(scrapy.Spider):
          position = sel.xpath( './/td/text()' ).extract()[ 1 ]
          team = Team.objects.get( teamId=teamId )
          espnId = re.match( urlNumRegex, playerUrl ).group( 1 )
-         if position in [ 'QB', 'RB', 'WR' ]:
+         if position in [ 'QB', 'RB', 'WR', 'PK' ]:
             player = Player.objects.get_or_create( name=name, position=position, espnId=espnId, team=team )
