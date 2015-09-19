@@ -41,19 +41,23 @@ class Player( models.Model ):
 class PlayerStat( models.Model ):
    player = models.ForeignKey( Player )
    week = models.IntegerField( default=0 )
+   # QB-specific
    completions = models.IntegerField( default=0 )
    attempts = models.IntegerField( default=0 )
    passingYards = models.IntegerField( default=0 )
    passingTD = models.IntegerField( default=0 )
    thrownInterceptions = models.IntegerField( default=0 )
+   # RB/WR-specific
    TD = models.IntegerField( default=0 )
    carries = models.IntegerField( default=0 )
+   receptions = models.IntegerField( default=0 )
    yards = models.IntegerField( default=0 )
+   # DEF/ST-specific
    kickoffTD = models.IntegerField( default=0 )
    puntTD = models.IntegerField( default=0 )
    interceptionsTD = models.IntegerField( default=0 )
    interceptions = models.IntegerField( default=0 )
-   receptions = models.IntegerField( default=0 )
+   # Final calculted score
    score = models.IntegerField( default=0 )
 
    def __unicode__( self ):

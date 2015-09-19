@@ -49,9 +49,10 @@ class BoxscoreSpider(scrapy.Spider):
          return
       week = -1 # TODO
       TD = playerReceivingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ]
+      receptions = playerReceivingSel.xpath( ".//td] @class='rec' ]/text()" ).extract()[ 0 ]
       yards = playerReceivingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ]
       playerStat = PlayerStat.objects.get_or_create( player=player, week=week, TD=TD,
-                                                     yards=yards )
+                                                     receptions=receptions, yards=yards )
    
    def parseTeamPassing( self, teamPassingSel ):
       for playerPassingSel in teamPassingSel.xpath( ".//tr" )[ : -1 ]:
