@@ -9,11 +9,21 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 
+@login_required
+def myPicks( req ):
+   if req.method == 'POST':
+      return HttpResponseRedirect( '/myPicks#success' )
+   else: 
+      week = Season.objects.all()[ 0 ].currentWeek
+      picks = Picks.objects.get_or_create( week=week, user=req.user )
+      context = { 'picks': picks[ 0 ] }
+      return render( req, 'myPicks.html', context )
+   
 def inDepth( req, week ):
    def helper_player( player ):
       if player:
          playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
-         team = Team.objects.get( teamId=player.teamId )
+         team = player.team
          game = Game.objects.get( team=team, week=week )
          if game.date <= timezone.now() or pick.user == req.user:
             return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
@@ -42,7 +52,7 @@ def inDepth( req, week ):
       pickList.append( helper_team( pick.TK ) )
       data.append( { 'name': pick.user.username, 'picks': pickList, 'score': pick.score } )
 
-   context = { 'data': data }
+   context = { 'data': data, 'week': week }
    return render( req, 'inDepth.html', context )
 
 

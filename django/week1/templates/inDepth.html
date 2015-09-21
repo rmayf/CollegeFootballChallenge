@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% block content %}
+   <h1>Week {{ week }}</h1>  
    <table class="pure-table">
       <thead>
 	 <th>Name</th>
@@ -17,7 +18,7 @@
 	       <td>{{ line.name }}</td>
 	       {% for player in line.picks %}
 		  {% if player or score == 0 %}
-		     <td><img src="/static/{{ player.school}}.png/">{{ player.name }} {{ player.score }}</td>
+		     <td><img src="/static/{{ player.school }}.png/">{{ player.name }} {{ player.score }}</td>
 		  {% else %}
 		     <td>-</td>
 		  {% endif %}
@@ -27,4 +28,7 @@
 	 {% endfor %}
       <tbody>
    </table>
+   <a class="pure-button" href="{% url "week1_index" %}">
+      <i class="fa fa-long-arrow-left"></i>Back 
+   </a>
 {% endblock %}
