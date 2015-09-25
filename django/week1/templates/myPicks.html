@@ -1,0 +1,121 @@
+{% extends "base.html" %}
+{% load i18n %}
+
+{% block title %}{% trans "My Picks" %}{% endblock %}
+{% block content %}
+<div id="success" class="pure-alert pure-alert-success">Picks Saved!</div>
+<div class="pure-g">
+   <div id="pick-window" class="pure-u-1-5">
+      <h2>Picks</h2>
+      <form class="pure-form">
+         {% csrf_token %}
+         <table class="pure-table">
+            <tbody>
+               <tr>
+                  <td>QB</td>
+                  <td>
+                     {% if picks.QB1 %}
+                        <img src="/static/{{ picks.QB1.team }}.png/">{{ picks.QB1 }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>QB</td>
+                  <td>
+                     {% if picks.QB2 %}
+                        <img src="/static/{{ picks.QB2.team }}.png/">{{ picks.QB2 }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>RB</td>
+                  <td>
+                     {% if picks.RB1 %}
+                        <img src="/static/{{ picks.RB1.team }}.png/">{{ picks.RB1 }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>RB</td>
+                  <td>
+                     {% if picks.RB2 %}
+                        <img src="/static/{{ picks.RB2.team }}.png/">{{ picks.RB2 }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>WR</td>
+                  <td>
+                     {% if picks.WR1 %}
+                        <img src="/static/{{ picks.WR1.team }}.png/">{{ picks.WR1 }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>WR</td>
+                  <td>
+                     {% if picks.WR2 %}
+                        <img src="/static/{{ picks.WR2.team }}.png/">{{ picks.WR2 }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>TD</td>
+                  <td>
+                     {% if picks.TD %}
+                        <img src="/static/{{ picks.TD }}.png/">{{ picks.TD }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <tr>
+                  <td>TK</td>
+                  <td>
+                     {% if picks.TK %}
+                        <img src="/static/{{ picks.TK }}.png/">{{ picks.TK }}
+                     {% else %}
+                        None
+                     {% endif %}
+                  </td>
+               <tr>
+               <input type="hidden" name="QB1" />
+               <input type="hidden" name="QB2" />
+               <input type="hidden" name="RB1" />
+               <input type="hidden" name="RB2" />
+               <input type="hidden" name="WR1" />
+               <input type="hidden" name="WR2" />
+               <input type="hidden" name="TD" />
+               <input type="hidden" name="TK" />
+            </tbody>
+         </table>
+         <button type="submit" class="pure-button pure-button-primary" formmethod='POST'>Save</button>
+      </form>
+   </div>
+
+   <div id="player-select" class="pure-u-4-5">
+      <h2>Players</h2>
+      <div class="pure-menu pure-menu-horizontal">
+         <ul class="pure-menu-list">
+            <li class="pure-menu-item pure-menu-link">Quaterbacks</li>   
+            <li class="pure-menu-item pure-menu-link">Running Backs</li>   
+            <li class="pure-menu-item pure-menu-link">Wide Receivers</li>   
+            <li class="pure-menu-item pure-menu-link">Team Defense</li>   
+            <li class="pure-menu-item pure-menu-link">Team Kicking</li>   
+         </ul>
+      </div>
+   </div>
+</div>
+{% endblock %}

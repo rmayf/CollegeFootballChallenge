@@ -36,9 +36,8 @@ DEBUG = True
 
 ALLOWED_HOSTS = []
 
-#LOGIN_REDIRECT_URL = '/'
-LOGIN_URL          = '/accounts/login/'
-LOGIN_REDIRECT_URL = '/'
+LOGIN_URL          = '/login#login-required'
+LOGIN_REDIRECT_URL = '/#login-success'
 SOCIAL_AUTH_GOOGLE_OAUTH2_KEY = private.SOCIAL_AUTH_GOOGLE_OAUTH2_KEY 
 SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET = private.SOCIAL_AUTH_GOOGLE_OAUTH2_SECRET 
 SOCIAL_AUTH_FACEBOOK_KEY = private.SOCIAL_AUTH_FACEBOOK_KEY
@@ -50,8 +49,8 @@ SOCIAL_AUTH_TWITTER_SECRET = private.SOCIAL_AUTH_TWITTER_SECRET
 # Application definition
 
 INSTALLED_APPS = (
-    'registration',
     'week1',
+    'registration',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
