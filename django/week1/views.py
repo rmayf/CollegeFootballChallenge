@@ -9,6 +9,8 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 
+PAC = "Pac-12"
+
 @login_required
 def myPicks( req ):
    if req.method == 'POST':
@@ -16,7 +18,62 @@ def myPicks( req ):
    else: 
       week = Season.objects.all()[ 0 ].currentWeek
       picks = Picks.objects.get_or_create( week=week, user=req.user )
-      context = { 'picks': picks[ 0 ] }
+      teams = Team.objects.filter( conference=PAC )
+      td = {}
+      tk = {}
+#      for team in teams:
+#	 stats = TeamStats.objects.filter( team=team ).order_by( "week" )
+#	 scoreSum = sum( map( stats, lambda stat: stat.score ) )
+#	 avg = scoreSum / len( stats )
+
+      players = Player.objects.filter( team__conference=PAC )
+      qb = {}
+      rb = {}
+      wr = {}
+      for player in players:
+	 stats = PlayerStat.objects.filter( player=player ).order_by( "week" )
+	 try:
+	    opp = Game.objects.get( team=player.team, week=week )
+	    opp = opp.opponent.name
+	 except Game.DoesNotExist:
+	    opp = "BYE"
+	 if( stats ):
+	    scoreSum = sum( map( lambda stat: stat.score, stats ) )
+	    avg = scoreSum / len( stats )
+	    lastWeek = list( stats )[ -1 ]
+	    if player.position == 'QB':
+	       stats = { 'ca': "%d / %d" % ( lastWeek.completions, lastWeek.attempts ),
+			 'passingYards': lastWeek.passingYards,
+			 'passingTD': lastWeek.passingTD,
+			 'thrownInterceptions': lastWeek.thrownInterceptions,
+			 'yards': lastWeek.yards,
+			 'TD': lastWeek.TD }
+	       qb[ player.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
+				     'stats': stats, 'team': player.team.name.replace( ' ', '_' ) }
+	    elif player.position == 'RB':
+	       stats = { 'TD': lastWeek.TD,
+			 'carries': lastWeek.carries,
+			 'receptions': lastWeek.receptions,
+			 'yards': lastWeek.yards }
+	       rb[ player.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
+				     'stats': stats, 'team': player.team.name.replace( ' ', '_' ) }
+	    elif player.position == 'WR':
+	       stats = { 'TD': lastWeek.TD,
+			 'carries': lastWeek.carries,
+			 'receptions': lastWeek.receptions,
+			 'yards': lastWeek.yards }
+	       wr[ player.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
+				     'stats': stats, 'team': player.team.name.replace( ' ', '_' ) }
+	 else:
+	    if player.position == 'QB':
+	       qb[ player.name ] = { 'opp': opp, 'team': player.team.name.replace( ' ', '_' ) }
+	    elif player.position == 'RB':
+	       rb[ player.name ] = { 'opp': opp, 'team': player.team.name.replace( ' ', '_' ) }
+	    elif player.position == 'WR':
+	       wr[ player.name ] = { 'opp': opp, 'team': player.team.name.replace( ' ', '_' ) }
+
+      teamStat = TeamStat.objects.filter( week=( week - 1 ) )
+      context = { 'picks': picks[ 0 ], 'posi': { 'qb': qb, 'wr': wr, 'rb': rb } }
       return render( req, 'myPicks.html', context )
    
 def inDepth( req, week ):

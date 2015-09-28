@@ -7,7 +7,12 @@
          <th>Name</th>
          {% with data|first as firstuser %}
             {% for score in firstuser.scores %}
-               <th><a href="{% url 'inDepth' forloop.counter %}">{{ forloop.counter }}</a></th>
+		  {% if forloop.counter > 3 %}
+		     <th> <a href="{% url 'inDepth' forloop.counter %}">{{ forloop.counter }}</a>
+		  {% else %}
+		     <th class="indepth-disabled"> {{ forloop.counter }}
+		  {% endif %}
+	       </th>
             {% endfor %}
          {% endwith %}
          <th>Total</th>
@@ -17,11 +22,17 @@
             <tr>
             <td>{{ user.name }}</td>
             {% for score in user.scores %}
+	       {% if forloop.counter < 4 %}
+		  <td class="indepth-disabled">	  
+	       {% else %}
+		  <td>
+	       {% endif %}	     
                {% if score or score == 0 %}
-                  <td>{{ score }}</td>
+                  {{ score }}
                {% else %}
-                  <td>-</td>
+                  -
                {% endif %}
+	       </td>
             {% endfor %}
             <td>{{ user.total }}</td>
             </tr>
