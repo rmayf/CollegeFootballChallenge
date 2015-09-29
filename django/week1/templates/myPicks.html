@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 {% load i18n %}
 
-{% block title %}{% trans "My Picks" %}{% endblock %}
 {% block content %}
 <div id="success" class="pure-alert pure-alert-success">Picks Saved!</div>
 <div class="pure-g">
@@ -109,13 +108,95 @@
       <h2>Players</h2>
       <div class="pure-menu pure-menu-horizontal">
          <ul class="pure-menu-list">
-            <li class="pure-menu-item pure-menu-link">Quaterbacks</li>   
-            <li class="pure-menu-item pure-menu-link">Running Backs</li>   
-            <li class="pure-menu-item pure-menu-link">Wide Receivers</li>   
-            <li class="pure-menu-item pure-menu-link">Team Defense</li>   
-            <li class="pure-menu-item pure-menu-link">Team Kicking</li>   
+            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'qb' )">Quaterbacks</li>   
+            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'rb' )">Running Backs</li>   
+            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'wr' )">Wide Receivers</li>   
+            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'td' )">Team Defense</li>   
+            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'tk' )">Team Kicking</li>   
          </ul>
       </div>
+      {% cycle 'qb' 'rb' 'wr' as pos silent %}
+      {% for i in 'xxx' %}
+      <table id="{{ pos }}" class="pure-table player-list" > 
+	 <thead>
+	    <tr>
+	       <td></td>
+	       <td>Player</td>
+	       <td>Opp</td>
+	       <td>Points</td>
+	       <td>Avg</td>
+	       {% if pos == 'qb' %}
+		  <td>C/A</td>
+		  <td>Passing Yards</td>
+		  <td>Passing TD</td>
+		  <td>Int</td>
+		  <td>Yards</td>
+		  <td>TD</td>
+	       {% else %}
+		  <td>receptions</td>
+		  <td>carries</td>
+		  <td>yards</td>
+		  <td>TD</td>
+	       {% endif %}
+	    </tr>
+	 <thead>
+	 <tbody>
+	    {% for k, v in posi.iteritems %}
+	       {% if k == pos %}
+		  {% for name, player in v.iteritems %}
+		     <tr id="{{ name }}">
+			<td><i class="fa fa-plus"></i></td>
+			<td>
+			   <img src="/static/{{ player.team }}.png/"> 
+			   {{ name }} </td>
+			<td> {{ player.opp }} </td>
+			{% if player.total %}
+			   <td> {{ player.total }} </td>
+			{% else %}
+			   <td> 0 </td>
+			{% endif %}
+			{% if player.avg %}
+			   <td> {{ player.avg }} </td>
+			{% else %}
+			   <td> 0 </td>
+			{% endif %}
+			{% if pos == 'qb' %}
+			   {% if player.stats %}
+			      <td> {{ player.stats.ca }} </td>
+			      <td> {{ player.stats.passingYards }} </td>
+			      <td> {{ player.stats.passingTD }} </td>
+			      <td> {{ player.stats.thrownInterceptions }} </td>
+			      <td> {{ player.stats.yards }} </td>
+			      <td> {{ player.stats.TD }} </td>
+			   {% else %}
+			      {% for i in 'xxxxxx' %}
+				 {% if forloop.counter0 == 0 %}
+				    <td> 0 / 0 </td>
+				 {% else %}
+				    <td> 0 </td>
+				 {% endif %}
+			      {% endfor %}
+			   {% endif %}
+			{% else %}
+			   {% if player.stats %}
+			      <td> {{ player.stats.receptions }} </td>
+			      <td> {{ player.stats.carries }} </td>
+			      <td> {{ player.stats.yards }} </td>
+			      <td> {{ player.stats.TD }} </td>
+			   {% else %}
+			      {% for i in 'xxxx' %}
+				 <td> 0 </td>
+			      {% endfor %}
+			   {% endif %}
+			{% endif %}
+		     </tr>
+		  {% endfor %}
+	       {% endif %}
+	    {% endfor %}
+	 </tbody>
+      </table>
+      {% cycle pos %}
+      {% endfor %}
    </div>
 </div>
 {% endblock %}
