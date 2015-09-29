@@ -14,6 +14,7 @@ class Game( models.Model ):
    opponent = models.ForeignKey( Team, related_name='opponent', default=0 )
    week = models.IntegerField( default=0 )
    date = models.DateTimeField()
+   gameId = models.IntegerField( default=0 )
 
    def __unicode__( self ):
       return '%s@%s' % ( self.team.name, self.opponent.name )
@@ -52,29 +53,22 @@ class PlayerStat( models.Model ):
    carries = models.IntegerField( default=0 )
    receptions = models.IntegerField( default=0 )
    yards = models.IntegerField( default=0 )
-   # DEF/ST-specific
-   kickoffTD = models.IntegerField( default=0 )
-   puntTD = models.IntegerField( default=0 )
-   interceptionsTD = models.IntegerField( default=0 )
-   interceptions = models.IntegerField( default=0 )
    # PK-specific
    extraPoints = models.IntegerField( default=0 )
    fieldGoals = models.IntegerField( default=0 )
    # Final calculted score
    score = models.IntegerField( default=0 )
 
-   def __unicode__( self ):
-      return self.player.name
-
-class TeamStat( models.Model ):
+class DefenseStat( models.Model ):
    team = models.ForeignKey( Team )
    week = models.IntegerField( default=0 )
-   FG = models.IntegerField( default=0 )
-   FGAttempts = models.IntegerField( default=0 )
-   PAT = models.IntegerField( default=0 )
-   PATAttempts = models.IntegerField( default=0 )
-   pointsAllowed = models.IntegerField( default=0 )
+   # DEF/ST-specific
+   kickoffTD = models.IntegerField( default=0 )
+   puntTD = models.IntegerField( default=0 )
+   interceptionsTD = models.IntegerField( default=0 )
+   interceptions = models.IntegerField( default=0 )
+   # Final calculted score
    score = models.IntegerField( default=0 )
 
    def __unicode__( self ):
-      return self.team.name
+      return self.player.name

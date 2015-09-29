@@ -63,8 +63,15 @@ class RosterSpider(scrapy.Spider):
          date = datetime.date( currentYear, monthStrDict[ dateString.split()[ 1 ] ],
                                int( dateString.split()[ 2 ] ) )
          week = getGameWeek( date )
-         game = Game.objects.get_or_create( team=team, opponent=opponent,
-                                            date=date, week=week )
+         # TODO: Handle case where game hasn't happened yet, what to do with gameId?
+         recapUrl = sel.xpath( './/td' )[ 2 ].xpath( './/a/@href' ).extract()[ 0 ]
+         gameId = re.match( urlNumRegex, recapUrl ).group( 1 )
+         # Check if game is already in DB with team/opponent flipped, create new game if not
+         try:
+            game = Game.objects.get( team=opponent, opponent=team )
+         except Game.DoesNotExist:
+            game = Game.objects.get_or_create( team=team, opponent=opponent,
+                                               date=date, week=week, gameId=gameId )
          
    def parseRosterUrl(self, response):
       playerSelectorXPath = '//table[@class="tablehead"]/tr'
