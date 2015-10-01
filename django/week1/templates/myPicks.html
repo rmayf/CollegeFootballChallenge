@@ -108,11 +108,31 @@
       <h2>Players</h2>
       <div class="pure-menu pure-menu-horizontal">
          <ul class="pure-menu-list">
-            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'qb' )">Quaterbacks</li>   
-            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'rb' )">Running Backs</li>   
-            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'wr' )">Wide Receivers</li>   
-            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'td' )">Team Defense</li>   
-            <li class="pure-menu-item pure-menu-link" onclick="showTable( 'tk' )">Team Kicking</li>   
+            <li class="pure-menu-item pure-menu-selected" onclick="selectPos( this, 'qb' )">
+	       <a href="#" class="pure-menu-link">
+		  Quarterbacks
+	       </a>
+	    </li>   
+            <li class="pure-menu-item" onclick="selectPos( this, 'rb' )">
+	       <a href="#" class="pure-menu-link">
+		  Running Backs
+	       </a>
+	    </li>   
+            <li class="pure-menu-item" onclick="selectPos( this, 'wr' )">
+	       <a href="#" class="pure-menu-link">
+		  Wide Receivers
+	       </a>
+	    </li>   
+            <li class="pure-menu-item" onclick="selectPos( this, 'td' )">
+	       <a href="#" class="pure-menu-link">
+		  Team Defense
+	       </a>
+	    </li>   
+            <li class="pure-menu-item" onclick="selectPos( this, 'tk' )">
+	       <a href="#" class="pure-menu-link">
+		  Team Kicking
+	       </a>
+	    </li>   
          </ul>
       </div>
       {% cycle 'qb' 'rb' 'wr' as pos silent %}
@@ -145,7 +165,11 @@
 	       {% if k == pos %}
 		  {% for name, player in v.iteritems %}
 		     <tr id="{{ name }}">
-			<td><i class="fa fa-plus"></i></td>
+			<td>
+			   <button onclick="addPlayer( '{{ pos }}', '{{ name }}' )">
+			      <i class="fa fa-plus" ></i>
+			   </div>
+			</td>
 			<td>
 			   <img src="/static/{{ player.team }}.png/"> 
 			   {{ name }} </td>
