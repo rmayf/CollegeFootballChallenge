@@ -78,8 +78,6 @@ class RosterSpider(scrapy.Spider):
 			# Check if game is already in DB with team/opponent flipped,
 			# create new game if not
 			try:
-				self.logger.info( "Game already exists for %s vs. %s" %
-								  ( team.name, opponent.name ) )
 				game = Game.objects.get( team=opponent, opponent=team )
 			except Game.DoesNotExist:
 				self.logger.info( "Creating game for %s vs. %s" %
@@ -97,6 +95,8 @@ class RosterSpider(scrapy.Spider):
 			name = sel.xpath( './/td/a/text()' ).extract()[ 0 ]
 			position = sel.xpath( './/td/text()' ).extract()[ 1 ]
 			team = Team.objects.get( teamId=teamId )
+			self.logger.debug( "Parsing a player for team: %s, name: %s, position: %s" %
+							   ( team.name, name, position ) )
 			espnId = re.match( urlNumRegex, playerUrl ).group( 1 )
 			if position in [ 'QB', 'RB', 'WR', 'PK' ]:
 				# Check is player ID already exists in database
@@ -104,7 +104,9 @@ class RosterSpider(scrapy.Spider):
 				try:
 					player = Player.objects.get( espnId=espnId )
 				except Player.DoesNotExist:
-						player = Player.objects.get_or_create( name=name,
-															   position=position,
-															   espnId=espnId,
-															   team=team )
+					self.logger.info( "Creating player for name: %s, team: %s" %
+									  ( name, team.name ) )
+					player = Player.objects.get_or_create( name=name,
+														   position=position,
+														   espnId=espnId,
+														   team=team )
