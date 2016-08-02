@@ -1,8 +1,9 @@
 *.swp
 *.pyc
-*PrivateSettings.py
+django/cfbc/PrivateSettings.py
 django/stats/migrations/*
 django/leaderboard/*
 django/myapp
 django/db.sqlite3
 django/cfbc/settings.py
+django/db/sqlite3
