@@ -9,9 +9,9 @@ django.setup()
 
 currentYear = 2016
 monthStrDict = { 'Aug' : 8, 'Sept' : 9, 'Oct' : 10, 'Nov' : 11, 'Dec' : 12 }
-weekStartMonthDays = [ ( 8, 31 ), ( 9, 7 ), ( 9, 14 ), ( 9, 21 ), ( 9, 28 ),
-                       ( 10, 5 ), ( 10, 12 ), ( 10, 19 ), ( 10, 26 ),
-                       ( 11, 2 ), ( 11, 9 ), ( 11, 16 ), ( 11, 23 ), ( 11, 30 ) ] 
+weekStartMonthDays = [ ( 8, 29 ), ( 9, 5 ), ( 9, 12 ), ( 9, 19 ), ( 9, 26 ),
+                       ( 10, 3 ), ( 10, 10 ), ( 10, 17 ), ( 10, 24 ), ( 10, 31 ),
+                       ( 11, 7 ), ( 11, 14 ), ( 11, 21 ), ( 11, 28 ) ]
 weekStartDates = [ datetime.date( currentYear, month, day ) for month, day in weekStartMonthDays ]
 
 def getGameWeek( date ):
