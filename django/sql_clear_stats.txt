@@ -1,0 +1,7 @@
+delete from stats_defensestat;
+delete from stats_game;
+delete from stats_player;
+delete from stats_playerstat;
+delete from stats_season;
+delete from stats_team;
+delete from stats_week;
