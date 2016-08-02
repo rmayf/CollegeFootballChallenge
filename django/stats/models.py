@@ -14,7 +14,7 @@ class Game( models.Model ):
    opponent = models.ForeignKey( Team, related_name='opponent', default=0 )
    week = models.IntegerField( default=0 )
    date = models.DateTimeField()
-   gameId = models.IntegerField( default=0 )
+   # gameId = models.IntegerField( default=0 ) # TODO: figure out how to handle this in roster_spider.py
 
    def __unicode__( self ):
       return '%s@%s' % ( self.team.name, self.opponent.name )
