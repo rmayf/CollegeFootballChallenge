@@ -55,26 +55,38 @@ class RosterSpider(scrapy.Spider):
 		gameSelectorXPath = '//table[@class="tablehead"]/tr'
 		for sel in response.xpath( gameSelectorXPath )[ 2 : ]:
 			teamId =  response.meta[ 'teamId' ]
-		team = Team.objects.get( teamId=teamId )
-		opponentUrl = sel.xpath( './/td' )[ 1 ].xpath( './/a/@href' ).extract()[ 0 ]
-		opponentTeamId = re.match( urlNumRegex, opponentUrl ).group( 1 )
-		opponent = Team.objects.get( teamId=opponentTeamId, )
-		dateString = unicodedata.normalize( 'NFKD', sel.xpath( './/td/text()' ) \
-						.extract()[ 0 ] ).encode( 'ascii', 'ignore' )
-		date = datetime.date( currentYear, monthStrDict[ dateString.split()[ 1 ] ],
-							  int( dateString.split()[ 2 ] ) )
-		week = getGameWeek( date )
-		# TODO: Handle case where game hasn't happened yet, what to do with gameId?
-		#recapUrl = sel.xpath( './/td' )[ 2 ].xpath( './/a/@href' ).extract()[ 0 ]
-		#gameId = re.match( urlNumRegex, recapUrl ).group( 1 )
-		# Check if game is already in DB with team/opponent flipped,
-		# create new game if not
-		try:
-		   game = Game.objects.get( team=opponent, opponent=team )
-		except Game.DoesNotExist:
-		   game = Game.objects.get_or_create( team=team, opponent=opponent,
-											  date=date, week=week ) # TODO: add back gameId=gameId
-         
+			team = Team.objects.get( teamId=teamId )
+			opponentUrl = sel.xpath( './/td' )[ 1 ].xpath( './/a/@href' ).extract()[ 0 ]
+			opponentTeamId = re.match( urlNumRegex, opponentUrl ).group( 1 )
+			opponent = Team.objects.get( teamId=opponentTeamId, )
+			self.logger.info( "Parsing schedule for %s, opponent: %s" %
+							  ( team.name, opponent.name ) )
+			dateString = unicodedata.normalize( 'NFKD', sel.xpath( './/td/text()' ) \
+							.extract()[ 0 ] ).encode( 'ascii', 'ignore' )
+			date = datetime.date( currentYear, monthStrDict[ dateString.split()[ 1 ] ],
+								  int( dateString.split()[ 2 ] ) )
+			week = getGameWeek( date )
+			gameId = None
+			recapSel = sel.xpath( './/td' )[ 2 ].xpath( './/a/@href' ).extract()
+			if recapSel and 'recap' in recapSel[ 0 ]:
+				self.logger.info( "Game ID is up for %s vs. %s. recapUrl: %s" %
+								  ( team.name, opponent.name, recapSel[ 0 ] ) )
+				gameId = re.match( urlNumRegex, recapSel[ 0 ] ).group( 1 )
+			else:
+				self.logger.info( "Game ID not up yet for %s vs. %s" %
+								   ( team.name, opponent.name ) )
+			# Check if game is already in DB with team/opponent flipped,
+			# create new game if not
+			try:
+				self.logger.info( "Game already exists for %s vs. %s" %
+								  ( team.name, opponent.name ) )
+				game = Game.objects.get( team=opponent, opponent=team )
+			except Game.DoesNotExist:
+				self.logger.info( "Creating game for %s vs. %s" %
+								  ( team.name, opponent.name ) )
+				game = Game.objects.get_or_create( team=team, opponent=opponent,
+													  date=date, week=week, gameId=gameId )
+				 
 	def parseRosterUrl(self, response):
 		playerSelectorXPath = '//table[@class="tablehead"]/tr'
 		teamSel = response.xpath( playerSelectorXPath )[ 1 ]

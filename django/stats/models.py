@@ -12,9 +12,9 @@ class Team( models.Model ):
 class Game( models.Model ):
    team = models.ForeignKey( Team, default=0 )
    opponent = models.ForeignKey( Team, related_name='opponent', default=0 )
-   week = models.IntegerField( default=0 )
+   week = models.IntegerField()
    date = models.DateField()
-   # gameId = models.IntegerField( default=0 ) # TODO: figure out how to handle this in roster_spider.py
+   gameId = models.IntegerField( null=True )
 
    def __unicode__( self ):
       return '%s@%s' % ( self.team.name, self.opponent.name )
