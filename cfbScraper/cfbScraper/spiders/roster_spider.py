@@ -75,10 +75,9 @@ class RosterSpider(scrapy.Spider):
 			else:
 				self.logger.info( "Game ID not up yet for %s vs. %s" %
 								   ( team.name, opponent.name ) )
-			# Check if game is already in DB with team/opponent flipped,
-			# create new game if not
+			# Check if game is already in DB, create new game if not
 			try:
-				game = Game.objects.get( team=opponent, opponent=team )
+				game = Game.objects.get( team=team, opponent=opponent )
 			except Game.DoesNotExist:
 				self.logger.info( "Creating game for %s vs. %s" %
 								  ( team.name, opponent.name ) )
