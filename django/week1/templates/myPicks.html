@@ -9,7 +9,7 @@
       <form class="pure-form">
          {% csrf_token %}
          <table class="pure-table">
-            <tbody>
+            <tbody id="pick-table">
                <tr>
                   <td>QB</td>
                   <td>
@@ -19,7 +19,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>QB</td>
                   <td>
@@ -29,7 +29,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>RB</td>
                   <td>
@@ -39,7 +39,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>RB</td>
                   <td>
@@ -49,7 +49,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>WR</td>
                   <td>
@@ -59,7 +59,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>WR</td>
                   <td>
@@ -69,7 +69,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>TD</td>
                   <td>
@@ -79,7 +79,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <tr>
                   <td>TK</td>
                   <td>
@@ -89,7 +89,7 @@
                         None
                      {% endif %}
                   </td>
-               <tr>
+               </tr>
                <input type="hidden" name="QB1" />
                <input type="hidden" name="QB2" />
                <input type="hidden" name="RB1" />
@@ -135,8 +135,8 @@
 	    </li>   
          </ul>
       </div>
-      {% cycle 'qb' 'rb' 'wr' as pos silent %}
-      {% for i in 'xxx' %}
+      {% cycle 'qb' 'rb' 'wr' 'pk' as pos silent %}
+      {% for i in 'xxxx' %}
       <table id="{{ pos }}" class="pure-table player-list" > 
 	 <thead>
 	    <tr>
@@ -152,7 +152,10 @@
 		  <td>Int</td>
 		  <td>Yards</td>
 		  <td>TD</td>
-	       {% else %}
+	       {% elif pos == 'pk' %}
+                  <td>FG</td>
+                  <td>PAT</td>
+               {% else %}
 		  <td>receptions</td>
 		  <td>carries</td>
 		  <td>yards</td>
@@ -164,9 +167,9 @@
 	    {% for k, v in posi.iteritems %}
 	       {% if k == pos %}
 		  {% for name, player in v.iteritems %}
-		     <tr id="{{ name }}">
+		     <tr id="{{ player.id }}">
 			<td>
-			   <button onclick="addPlayer( '{{ pos }}', '{{ name }}' )">
+			   <button onclick="addPlayer( '{{ pos }}', '{{ name }}', '{{ player.id }}' )">
 			      <i class="fa fa-plus" ></i>
 			   </div>
 			</td>
@@ -201,6 +204,15 @@
 				 {% endif %}
 			      {% endfor %}
 			   {% endif %}
+                        {% elif pos == 'pk' %}
+                           {% if player.stats %}
+                              <td> {{ player.stats.FG }} </td>
+                              <td> {{ player.stats.PAT }} </td>
+                           {% else %}
+                              {% for i in 'xx' %}
+                                 <td> 0 </td>
+                              {% endfor %}
+                           {% endif %}
 			{% else %}
 			   {% if player.stats %}
 			      <td> {{ player.stats.receptions }} </td>

@@ -7,7 +7,7 @@
          <th>Name</th>
          {% with data|first as firstuser %}
             {% for score in firstuser.scores %}
-		  {% if forloop.counter > 3 %}
+		  {% if forloop.counter >= week %}
 		     <th> <a href="{% url 'inDepth' forloop.counter %}">{{ forloop.counter }}</a>
 		  {% else %}
 		     <th class="indepth-disabled"> {{ forloop.counter }}
