@@ -90,14 +90,14 @@
                      {% endif %}
                   </td>
                </tr>
-               <input type="hidden" name="QB1" />
-               <input type="hidden" name="QB2" />
-               <input type="hidden" name="RB1" />
-               <input type="hidden" name="RB2" />
-               <input type="hidden" name="WR1" />
-               <input type="hidden" name="WR2" />
-               <input type="hidden" name="TD" />
-               <input type="hidden" name="TK" />
+               <input type="hidden" name="QB1" position='qb' />
+               <input type="hidden" name="QB2" position='qb' />
+               <input type="hidden" name="RB1" position='rb' />
+               <input type="hidden" name="RB2" position='rb' />
+               <input type="hidden" name="WR1" position='wr' />
+               <input type="hidden" name="WR2" position='wr' />
+               <input type="hidden" name="TD"  position='td' />
+               <input type="hidden" name="TK"  position='tk' />
             </tbody>
          </table>
          <button type="submit" class="pure-button pure-button-primary" formmethod='POST'>Save</button>
@@ -162,14 +162,14 @@
 		  <td>TD</td>
 	       {% endif %}
 	    </tr>
-	 <thead>
+	 </thead>
 	 <tbody>
 	    {% for k, v in posi.iteritems %}
 	       {% if k == pos %}
 		  {% for name, player in v.iteritems %}
 		     <tr id="{{ player.id }}">
 			<td>
-			   <button onclick="addPlayer( '{{ pos }}', '{{ name }}', '{{ player.id }}' )">
+			   <button class="pure-button" onclick="addPlayer( '{{ pos }}', '{{ name }}', '{{ player.id }}' )">
 			      <i class="fa fa-plus" ></i>
 			   </div>
 			</td>

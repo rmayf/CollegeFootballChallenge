@@ -22,50 +22,102 @@ function selectPos( tab, table ) {
    showTable( table )
 }
 
-function addPlayer( pos, name, id ) {
-   console.log( "Position: " + pos + " Name: " + name + " Id: " + id )
-   // Add to pick-table
+function dropPlayer( pos, name, id ) {
+   console.log( "dropPlayer Position: " + pos + " Name: " + name + " Id: " + id )
+   // Remove from picks-window
    var picks = document.getElementById( "pick-table" ).getElementsByTagName( "tr" )
-   var dropping = false
-   for( var i = 0; i < picks.length; i++ ) {
-      var row = picks[ i ]
-      if( row.cells[ 0 ].innerText.toLowerCase() == pos 
-          && row.cells[ 1 ].innerText == name ) {
-         dropping = true
-         break
-      }
-   }
-   var otherId = -1
    for( var i = 0; i < picks.length; i++ ) {
       var row = picks[ i ]
       if( row.cells[ 0 ].innerText.toLowerCase() == pos ) {
          if( row.cells[ 1 ].innerText == name ) {
-            row.cells[ 1 ].innerHTML = "None"
+            row.cells[ 1 ].innerText = "None"
+            row.cells[ 1 ].removeAttribute( 'espnId' ) 
             break
-         } else if( row.cells[ 1 ].innerText == "None" && !dropping ) {
+         }
+      }
+   }
+   // Remove from hidden input
+   // Also grab an otherId if exists
+   otherId = null
+   var inputs = document.getElementById( "pick-table" ).getElementsByTagName( "input" )
+   for( var i = 0; i < inputs.length; i++ ) {
+      if( inputs[ i ].getAttribute( 'position' ) == pos ) {
+         if( inputs[ i ].getAttribute( 'value' ) == id ) {
+            inputs[ i ].removeAttribute( 'value' )
+         } else {
+            otherId = inputs[ i ].getAttribute( 'value' )
+         }
+      }
+   }
+   // Change icons
+   var playerTable = document.getElementById( pos ).getElementsByTagName( "tbody" )[ 0 ]
+   var rows = playerTable.getElementsByTagName( "tr" )
+   for( var i = 0; i < rows.length; i++ ) {
+      var cur_id = rows[ i ].getAttribute( 'id' )
+      var button = rows[ i ].getElementsByTagName( "button" )[ 0 ]
+      var icon = rows[ i ].getElementsByTagName( "i" )[ 0 ]
+      var cur_name = rows[ i ].children[ 1 ].innerText.trim()
+      if( cur_id != otherId ) {
+         //change to plus
+         button.setAttribute( "class", "pure-button" )
+         button.setAttribute( "onClick", "addPlayer( \"" + pos + "\",\"" + cur_name + "\", " + cur_id + ")" )
+         icon.setAttribute( "class", "fa fa-plus" )
+      }
+      if( cur_id == id ) {
+         rows[ i ].removeAttribute( 'class' )
+      }
+   }
+}
+
+function addPlayer( pos, name, id ) {
+   console.log( "addPlayer Position: " + pos + " Name: " + name + " Id: " + id )
+   // Add to pick-table
+   var picks = document.getElementById( "pick-table" ).getElementsByTagName( "tr" )
+   var otherId = null
+   var set = false
+   for( var i = 0; i < picks.length; i++ ) {
+      var row = picks[ i ]
+      if( row.cells[ 0 ].innerText.toLowerCase() == pos ) {
+         if( row.cells[ 1 ].innerText == name ) {
+            console.log( "Player already in picks table: " + name )
+            return -1
+         } else if( !set && row.cells[ 1 ].innerText == "None" ) {
             row.cells[ 1 ].innerHTML = name 
             row.cells[ 1 ].setAttribute( 'espnId', id )
-            break
+            set = true
          } else {
             otherId = row.cells[ 1 ].getAttribute( 'espnId' )
          }
       }
    }
-   
-   // change icons
-   var statsTable = document.getElementById( id )
-   var button = statsTable.children[ 0 ].getElementsByTagName( "i" )[ 0 ]
-   if( dropping ) {
-      button.setAttribute( "class", "fa fa-plus" )
-   } else {
-      button.setAttribute( "class", "fa fa-minus" )
+
+   // Add to hidden input field
+   var inputs = document.getElementById( "pick-table" ).getElementsByTagName( "input" )
+   for( var i = 0; i < inputs.length; i++ ) {
+      if( inputs[ i ].getAttribute( 'position' ) == pos && inputs[ i ].getAttribute( 'value' ) == null ) {
+         inputs[ i ].setAttribute( 'value', id )
+         break
+      }
    }
-   if( otherId != -1 && pos != 'td' && pos != 'tk' ) {
-      // change all icons except the set players to locked
-      var statsRows = document.getElementsByClassName( "stats-row" )
-      for( var i = 0; i < statsRows.length; i++ ) {
-         var button = stastRows[ i ].getElementsByTagName( "i" )[ 0 ]
-         button.setAttribute( "class", "fa fa-lock" )
+
+   // Change icons
+   var playerTable = document.getElementById( pos ).getElementsByTagName( "tbody" )[ 0 ]
+   var rows = playerTable.getElementsByTagName( "tr" )
+   for( var i = 0; i < rows.length; i++ ) {
+      var cur_id = rows[ i ].getAttribute( 'id' )
+      var button = rows[ i ].getElementsByTagName( "button" )[ 0 ]
+      var icon = rows[ i ].getElementsByTagName( "i" )[ 0 ]
+      if( cur_id == id ) {
+         // change it to the minus
+         button.setAttribute( "class", "pure-button" )
+         button.setAttribute( "onClick", "dropPlayer( \"" + pos + "\",\"" + name + "\"," + id + ")" )
+         icon.setAttribute( "class", "fa fa-minus" )
+         rows[ i ].setAttribute( "class", 'cfbc-picked' )
+      } else if( ( otherId != null && otherId != cur_id ) || pos == 'tk' || pos == 'td' ) {
+         //change to lock
+         button.setAttribute( "class", "pure-button pure-button-disabled" )
+         button.removeAttribute( "onClick" )
+         icon.setAttribute( "class", "fa fa-lock" )
       }
    }
 }
