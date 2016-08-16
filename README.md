@@ -18,3 +18,10 @@ Don't forget to comment out NotImplementedError!
 
 #Database Access#
 - sqlite3 db.sqlite3
+
+#Roster Scraper#
+The roster scraper will populate the database with all the PAC-12 players.  It only needs to be run once before the season starts.  Subsequent runs will add duplicate for each player already in the database.  If the roster needs to be updated, the player table must first be cleared.  Populate the player data with the following commands:
+```bash
+cd cfbcScraper
+./run.sh
+```
