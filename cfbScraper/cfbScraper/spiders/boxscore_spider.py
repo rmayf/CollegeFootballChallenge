@@ -62,12 +62,13 @@ class BoxscoreSpider( scrapy.Spider ):
 		except PlayerStat.DoesNotExist:
 			existingScore = 0
 		
-		TD = int( playerRushingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
+		rushingTD = int( playerRushingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
 		carries = int( playerRushingSel.xpath( ".//td[ @class='car' ]/text()" ).extract()[ 0 ] )
-		yards = int( playerRushingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
-		newScore = 6 * TD + 0.1 * yards
+		rushingYards = int( playerRushingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
+		newScore = 6 * rushingTD + 0.1 * rushingYards
 		PlayerStat.objects.update_or_create( player=player, week=self.week,
-			defaults={ 'TD' : TD, 'carries' : carries, 'yards' : yards,
+			defaults={ 'rushingTD' : rushingTD, 'carries' : carries,
+					   'rushingYards' : rushingYards,
 					   'score' : existingScore + newScore } )
 
 	def parsePlayerReceiving( self, playerReceivingSel ):
@@ -83,12 +84,13 @@ class BoxscoreSpider( scrapy.Spider ):
 		except PlayerStat.DoesNotExist:
 			existingScore = 0
 		
-		TD = int( playerReceivingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
+		receivingTD = int( playerReceivingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
 		receptions = int( playerReceivingSel.xpath( ".//td[ @class='rec' ]/text()" ).extract()[ 0 ] )
-		yards = int( playerReceivingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
-		newScore = 6 * TD + 0.1 * yards
+		receivingYards = int( playerReceivingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
+		newScore = 6 * receivingTD + 0.1 * receivingYards
 		PlayerStat.objects.update_or_create( player=player, week=self.week,
-			defaults={ 'TD' : TD, 'receptions' : receptions, 'yards' : yards,
+			defaults={ 'receivingTD' : receivingTD, 'receptions' : receptions,
+					   'receivingYards' : receivingYards,
 					   'score' : existingScore + newScore } )
    
 	def parsePlayerKicking( self, playerKickingSel ):
