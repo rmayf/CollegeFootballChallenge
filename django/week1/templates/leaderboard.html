@@ -1,7 +1,14 @@
 {% extends "base.html" %}
 
 {% block content %}
-   <div id="login-success" class="pure-alert pure-alert-success">Login Successful</div>
+   <div id="login-success" class="pure-alert pure-alert-success" onclick="hideAlert()">
+      <div id="alert-message">
+         Login Successful
+      </div>
+      <div id="alert-icon">
+         <icon class="fa fa-times"/>
+      </div>
+   </div>
    <table class="pure-table">
       <thead>
          <th>Name</th>
@@ -39,7 +46,4 @@
          {% endfor %}
       </tbody>
    </table>
-   {% comment %}
-   <p>{{ data }}</p>
-   {% endcomment %}
 {% endblock %}

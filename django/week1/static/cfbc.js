@@ -122,6 +122,10 @@ function addPlayer( pos, name, id ) {
    }
 }
 
-window.onload = function() {
-   showTable( 'qb' )
+function hideAlert(){ 
+   window.location.hash = ''
 }
+
+//window.onload = function() {
+//   showTable( 'qb' )
+//}

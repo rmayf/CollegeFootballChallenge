@@ -16,7 +16,7 @@ class Picks( models.Model ):
    RB2 = models.ForeignKey( Player, related_name='rb2', null=True )
    WR1 = models.ForeignKey( Player, related_name='wr1', null=True )
    WR2 = models.ForeignKey( Player, related_name='wr2', null=True )
-   TK = models.ForeignKey( Team, related_name='tk', null=True )
+   PK = models.ForeignKey( Player, related_name='pk', null=True )
    TD = models.ForeignKey( Team, related_name='td', null=True )
    score = models.IntegerField( default=0 )
 

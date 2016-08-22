@@ -13,11 +13,88 @@ PAC = "Pac-12"
 
 @login_required
 def myPicks( req ):
+   week = Season.objects.all()[ 0 ].currentWeek
+   picks = Picks.objects.get_or_create( week=week, user=req.user )[ 0 ]
    if req.method == 'POST':
+      qb1 = req.POST.get( 'QB1' )
+      if qb1 == '':
+         qb1 = None
+      qb2 = req.POST.get( 'QB2' ) 
+      if qb2 == '':
+         qb2 = None
+      rb1 = req.POST.get( 'RB1' ) 
+      if rb1 == '':
+         rb1 = None
+      rb2 = req.POST.get( 'RB2' ) 
+      if rb2 == '':
+         rb2 = None
+      wr1 = req.POST.get( 'WR1' ) 
+      if wr1 == '':
+         wr1 = None
+      wr2 = req.POST.get( 'WR2' ) 
+      if wr2 == '':
+         wr2 = None
+      pk = req.POST.get( 'PK' ) 
+      if pk == '':
+         pk = None
+      td = req.POST.get( 'TD' ) 
+      if td == '':
+         td = None
+      # Make sure picks are valid
+      # Can't pick the same player twice
+      if qb1 and qb1 == qb2:
+         return HttpResponseRedirect( '/myPicks#error' )
+      if wr1 and wr1 == wr2:
+         return HttpResponseRedirect( '/myPicks#error' )
+      if rb1 and rb1 == rb2:
+         return HttpResponseRedirect( '/myPicks#error' )
+      # playerIDs must be valid
+      # must have picked a player for the proper position
+      try:
+         if qb1:
+            qb1 = Player.objects.get( espnId=qb1 )
+            if qb1.position != 'QB':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if qb2:
+            qb2 = Player.objects.get( espnId=qb2 )
+            if qb2.position != 'QB':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if rb1:
+            rb1 = Player.objects.get( espnId=rb1 )
+            if rb1.position != 'RB':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if rb2:
+            rb2 = Player.objects.get( espnId=rb2 )
+            if rb2.position != 'RB':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if wr1:
+            wr1 = Player.objects.get( espnId=wr1 )
+            if wr1.position != 'WR':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if wr2:
+            wr2 = Player.objects.get( espnId=wr2 )
+            if wr2.position != 'WR':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if pk:
+            pk = Player.objects.get( espnId=pk )
+            if pk.position != 'PK':
+               return HttpResponseRedirect( '/myPicks#error' )
+         if td:
+            td = Team.objects.get( teamId=td )
+      except Player.DoesNotExist, Team.DoesNotExist:
+         return HttpResponseRedirect( '/myPicks#error' )
+      # Update picks
+      picks.QB1 = qb1 if qb1 else picks.QB1
+      picks.QB2 = qb2 if qb2 else picks.QB2
+      picks.RB1 = rb1 if rb1 else picks.RB1
+      picks.RB2 = rb2 if rb2 else picks.RB2
+      picks.WR1 = wr1 if wr1 else picks.WR1
+      picks.WR2 = wr2 if wr2 else picks.WR2
+      picks.PK = pk if pk else picks.PK
+      picks.TD = td if td else picks.TD
+      picks.save()
       return HttpResponseRedirect( '/myPicks#success' )
    else: 
-      week = Season.objects.all()[ 0 ].currentWeek
-      picks = Picks.objects.get_or_create( week=week, user=req.user )
       teams = Team.objects.filter( conference=PAC )
       td = {}
       for team in teams:
@@ -105,8 +182,30 @@ def myPicks( req ):
                                      'id': player.espnId }
 
       teamStat = DefenseStat.objects.filter( week=( week - 1 ) )
-      context = { 'picks': picks[ 0 ], 'posi': { 'qb': qb, 'wr': wr, 'rb': rb,
-                                                 'pk': pk, 'td': td } }
+      pickList = []
+      def pickList_helper( pick, l, position=None, id=None ):
+         if position:
+            position = position
+         else:
+            position = pick.position
+         if id:
+            id = id
+         else:
+            id = pick.espnId
+         if pick:
+            l.append( { 'position': position,
+                        'name': pick.name,
+                        'espnId': id } )
+      pickList_helper( picks.QB1, pickList )
+      pickList_helper( picks.QB2, pickList )
+      pickList_helper( picks.RB1, pickList )
+      pickList_helper( picks.RB2, pickList )
+      pickList_helper( picks.WR1, pickList )
+      pickList_helper( picks.WR2, pickList )
+      pickList_helper( picks.TD, pickList, position='TD', id=picks.TD.teamId )
+      pickList_helper( picks.PK, pickList )
+      context = { 'picks': pickList, 'posi': { 'qb': qb, 'wr': wr, 'rb': rb,
+                                               'pk': pk, 'td': td } }
       return render( req, 'myPicks.html', context )
    
 def inDepth( req, week ):
@@ -114,18 +213,24 @@ def inDepth( req, week ):
       if player:
          playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
          team = player.team
-         game = Game.objects.get( team=team, week=week )
-         if game.date <= timezone.now() or pick.user == req.user:
+         try:
+            game = Game.objects.get( team=team, week=week )
             return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
+         except Game.DoesNotExist:
+            if pick.user == req.user:
+               return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
       else:
          return None
 
    def helper_team( team ):
       if team:
          teamStat = DefenseStat.objects.get_or_create( team=team, week=week )[ 0 ]
-         game = Game.objects.get( team=team, week=week )
-         if game.date <= timezone.now() or pick.user == req.user:
+         try:
+            game = Game.objects.get( team=team, week=week )
             return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
+         except Game.DoesNotExist:
+            if pick.user == req.user:
+               return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
       else:
          return None
       
@@ -139,7 +244,7 @@ def inDepth( req, week ):
       pickList.append( helper_player( pick.WR1 ) )
       pickList.append( helper_player( pick.WR2 ) )
       pickList.append( helper_team( pick.TD ) )
-      pickList.append( helper_team( pick.TK ) )
+      pickList.append( helper_player( pick.PK ) )
       data.append( { 'name': pick.user.username, 'picks': pickList, 'score': pick.score } )
 
    context = { 'data': data, 'week': week }
@@ -222,8 +327,8 @@ def roster_team( req, position ):
       except Picks.MultipleObjectsReturned:
          raise Http404( 'There are more than 1 pick for the player for the week' ) 
       try:
-         if position == 'TK':
-            picks.TK = Team.objects.get( id=id )
+         if position == 'PK':
+            picks.PK = Team.objects.get( id=id )
          elif position == 'TD':
             picks.TD = Team.objects.get( id=id )
       except Team.DoesNotExist:

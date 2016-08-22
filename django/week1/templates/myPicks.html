@@ -2,7 +2,30 @@
 {% load i18n %}
 
 {% block content %}
-<div id="success" class="pure-alert pure-alert-success">Picks Saved!</div>
+<script type="text/javascript">
+   window.onload = function() {
+      showTable( 'qb' )
+      {% for pick in picks %}
+      addPlayer( '{{ pick.position|lower }}', '{{ pick.name }}', '{{ pick.espnId }}' );
+      {% endfor %}
+   }
+</script>
+<div id="success" class="pure-alert pure-alert-success" onclick="hideAlert()">
+   <div id="alert-message">
+      Picks Saved!
+   </div>
+   <div id="alert-icon">
+      <icon class="fa fa-times"/>
+   </div>
+</div>
+<div id="error" class="pure-alert pure-alert-error" onclick="hideAlert()">
+   <div id="alert-message">
+      Error submitting picks
+   </div>
+   <div id="alert-icon">
+      <icon class="fa fa-times"/>
+   </div>
+</div>
 <div class="pure-g">
    <div id="pick-window" class="pure-u-1-5">
       <h2>Picks</h2>
@@ -13,81 +36,49 @@
                <tr>
                   <td>QB</td>
                   <td>
-                     {% if picks.QB1 %}
-                        {{ picks.QB1 }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>QB</td>
                   <td>
-                     {% if picks.QB2 %}
-                        {{ picks.QB2 }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>RB</td>
                   <td>
-                     {% if picks.RB1 %}
-                        {{ picks.RB1 }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>RB</td>
                   <td>
-                     {% if picks.RB2 %}
-                        {{ picks.RB2 }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>WR</td>
                   <td>
-                     {% if picks.WR1 %}
-                        {{ picks.WR1 }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>WR</td>
                   <td>
-                     {% if picks.WR2 %}
-                        {{ picks.WR2 }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>TD</td>
                   <td>
-                     {% if picks.TD %}
-                        {{ picks.TD }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <tr>
                   <td>PK</td>
                   <td>
-                     {% if picks.PK %}
-                        {{ picks.PK }}
-                     {% else %}
-                        None
-                     {% endif %}
+                     None
                   </td>
                </tr>
                <input type="hidden" name="QB1" position='qb' />
