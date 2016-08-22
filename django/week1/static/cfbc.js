@@ -113,7 +113,7 @@ function addPlayer( pos, name, id ) {
          button.setAttribute( "onClick", "dropPlayer( \"" + pos + "\",\"" + name + "\"," + id + ")" )
          icon.setAttribute( "class", "fa fa-minus" )
          rows[ i ].setAttribute( "class", 'cfbc-picked' )
-      } else if( ( otherId != null && otherId != cur_id ) || pos == 'tk' || pos == 'td' ) {
+      } else if( ( otherId != null && otherId != cur_id ) || pos == 'pk' || pos == 'td' ) {
          //change to lock
          button.setAttribute( "class", "pure-button pure-button-disabled" )
          button.removeAttribute( "onClick" )

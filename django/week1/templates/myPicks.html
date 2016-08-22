@@ -14,7 +14,7 @@
                   <td>QB</td>
                   <td>
                      {% if picks.QB1 %}
-                        <img src="/static/{{ picks.QB1.team }}.png/">{{ picks.QB1 }}
+                        {{ picks.QB1 }}
                      {% else %}
                         None
                      {% endif %}
@@ -24,7 +24,7 @@
                   <td>QB</td>
                   <td>
                      {% if picks.QB2 %}
-                        <img src="/static/{{ picks.QB2.team }}.png/">{{ picks.QB2 }}
+                        {{ picks.QB2 }}
                      {% else %}
                         None
                      {% endif %}
@@ -34,7 +34,7 @@
                   <td>RB</td>
                   <td>
                      {% if picks.RB1 %}
-                        <img src="/static/{{ picks.RB1.team }}.png/">{{ picks.RB1 }}
+                        {{ picks.RB1 }}
                      {% else %}
                         None
                      {% endif %}
@@ -44,7 +44,7 @@
                   <td>RB</td>
                   <td>
                      {% if picks.RB2 %}
-                        <img src="/static/{{ picks.RB2.team }}.png/">{{ picks.RB2 }}
+                        {{ picks.RB2 }}
                      {% else %}
                         None
                      {% endif %}
@@ -54,7 +54,7 @@
                   <td>WR</td>
                   <td>
                      {% if picks.WR1 %}
-                        <img src="/static/{{ picks.WR1.team }}.png/">{{ picks.WR1 }}
+                        {{ picks.WR1 }}
                      {% else %}
                         None
                      {% endif %}
@@ -64,7 +64,7 @@
                   <td>WR</td>
                   <td>
                      {% if picks.WR2 %}
-                        <img src="/static/{{ picks.WR2.team }}.png/">{{ picks.WR2 }}
+                        {{ picks.WR2 }}
                      {% else %}
                         None
                      {% endif %}
@@ -74,17 +74,17 @@
                   <td>TD</td>
                   <td>
                      {% if picks.TD %}
-                        <img src="/static/{{ picks.TD }}.png/">{{ picks.TD }}
+                        {{ picks.TD }}
                      {% else %}
                         None
                      {% endif %}
                   </td>
                </tr>
                <tr>
-                  <td>TK</td>
+                  <td>PK</td>
                   <td>
-                     {% if picks.TK %}
-                        <img src="/static/{{ picks.TK }}.png/">{{ picks.TK }}
+                     {% if picks.PK %}
+                        {{ picks.PK }}
                      {% else %}
                         None
                      {% endif %}
@@ -97,7 +97,7 @@
                <input type="hidden" name="WR1" position='wr' />
                <input type="hidden" name="WR2" position='wr' />
                <input type="hidden" name="TD"  position='td' />
-               <input type="hidden" name="TK"  position='tk' />
+               <input type="hidden" name="PK"  position='pk' />
             </tbody>
          </table>
          <button type="submit" class="pure-button pure-button-primary" formmethod='POST'>Save</button>
@@ -128,15 +128,15 @@
 		  Team Defense
 	       </a>
 	    </li>   
-            <li class="pure-menu-item" onclick="selectPos( this, 'tk' )">
+            <li class="pure-menu-item" onclick="selectPos( this, 'pk' )">
 	       <a href="#" class="pure-menu-link">
-		  Team Kicking
+		  Place Kickers
 	       </a>
 	    </li>   
          </ul>
       </div>
-      {% cycle 'qb' 'rb' 'wr' 'pk' as pos silent %}
-      {% for i in 'xxxx' %}
+      {% cycle 'qb' 'rb' 'wr' 'td' 'pk' as pos silent %}
+      {% for i in 'xxxxx' %}
       <table id="{{ pos }}" class="pure-table player-list" > 
 	 <thead>
 	    <tr>
@@ -155,6 +155,11 @@
 	       {% elif pos == 'pk' %}
                   <td>FG</td>
                   <td>PAT</td>
+               {% elif pos == 'td' %}
+                  <td>Kickoff TD</td>
+                  <td>Punt TD</td>
+                  <td>Interception TD</td>
+                  <td>Interceptions</td>
                {% else %}
 		  <td>receptions</td>
 		  <td>carries</td>

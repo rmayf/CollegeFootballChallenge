@@ -20,11 +20,27 @@ def myPicks( req ):
       picks = Picks.objects.get_or_create( week=week, user=req.user )
       teams = Team.objects.filter( conference=PAC )
       td = {}
-      tk = {}
-#      for team in teams:
-#	 stats = TeamStats.objects.filter( team=team ).order_by( "week" )
-#	 scoreSum = sum( map( stats, lambda stat: stat.score ) )
-#	 avg = scoreSum / len( stats )
+      for team in teams:
+         stats = DefenseStat.objects.filter( team=team ).order_by( "week" )
+	 try:
+	    opp = Game.objects.get( team=team, week=week )
+	    opp = opp.opponent.name
+	 except Game.DoesNotExist:
+	    opp = "BYE"
+         if stats:
+            scoreSum = sum( map( lambda stat: stat.score, stats ) )
+            avg = scoreSum / len( stats )
+            lastWeek = list( stats )[ -1 ]
+            stats = { 'kickoffTD': lastWeek.kickoffTD,
+                      'puntTD': lastWeek.puntTD,
+                      'interceptionsTD': lastWeek.interceptionsTD,
+                      'interception': lastWeek.interceptions }
+            td[ team.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
+                                'stats': stats, 'team': team.name.replace( ' ', '_' ),
+                                'id': team.teamId }
+         else:
+            td[ team.name ] = { 'opp': opp, 'team': team.name.replace( ' ', '_' ),
+                                'id': team.teamId }
 
       players = Player.objects.filter( team__conference=PAC )
       qb = {}
@@ -90,7 +106,7 @@ def myPicks( req ):
 
       teamStat = DefenseStat.objects.filter( week=( week - 1 ) )
       context = { 'picks': picks[ 0 ], 'posi': { 'qb': qb, 'wr': wr, 'rb': rb,
-                                                 'pk': pk } }
+                                                 'pk': pk, 'td': td } }
       return render( req, 'myPicks.html', context )
    
 def inDepth( req, week ):
@@ -161,7 +177,7 @@ def leaderboard( req ):
       for picks in userPicks:
          total += picks.score
       dataIndex = 0
-      for i in range( 1, 14 ):
+      for i in range( 0, 13 ):
          if dataIndex < len( userPicks ):
             if userPicks[ dataIndex ].week == i:
                scores.append( userPicks[ dataIndex ].score )

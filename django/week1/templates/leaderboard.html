@@ -7,10 +7,10 @@
          <th>Name</th>
          {% with data|first as firstuser %}
             {% for score in firstuser.scores %}
-		  {% if forloop.counter >= week %}
-		     <th> <a href="{% url 'inDepth' forloop.counter %}">{{ forloop.counter }}</a>
+		  {% if forloop.counter0 <= week %}
+		     <th> <a href="{% url 'inDepth' forloop.counter0 %}">{{ forloop.counter0 }}</a>
 		  {% else %}
-		     <th class="indepth-disabled"> {{ forloop.counter }}
+		     <th class="indepth-disabled"> {{ forloop.counter0 }}
 		  {% endif %}
 	       </th>
             {% endfor %}
@@ -22,7 +22,7 @@
             <tr>
             <td>{{ user.name }}</td>
             {% for score in user.scores %}
-	       {% if forloop.counter < 4 %}
+	       {% if forloop.counter0 < week %}
 		  <td class="indepth-disabled">	  
 	       {% else %}
 		  <td>
