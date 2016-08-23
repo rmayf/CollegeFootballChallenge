@@ -33,3 +33,18 @@ The boxscore scraper takes a command line argument of gameId. For example:
 cd cfbcScraper
 scrapy crawl boxscore -a gameId=<gameId>
 ```
+
+#Deployment Steps#
+```bash
+sudo apt-get install git
+sudo apt-get install python-pip
+sudo apt-get install python-dev
+sudo apt-get install libffi-dev
+sudo apt-get install libssl-dev 
+sudo apt-get install libxml2-dev libxslt1-dev
+git clone https://github.com/rmayf/CollegeFootballChallenge.git
+cd CollegeFootballChallenge
+sudo pip install virtualenv
+sudo pip install -r requirements.txt
+#Update PrivateSettings.py in cfbc```
+
