@@ -184,26 +184,34 @@ def myPicks( req ):
       teamStat = DefenseStat.objects.filter( week=( week - 1 ) )
       pickList = []
       def pickList_helper( pick, l, position=None, id=None ):
-         if position:
-            position = position
-         else:
-            position = pick.position
-         if id:
-            id = id
-         else:
-            id = pick.espnId
          if pick:
+            if position:
+               position = position
+            else:
+               position = pick.position
+            if id:
+               id = id
+            else:
+               id = pick.espnId
             l.append( { 'position': position,
                         'name': pick.name,
                         'espnId': id } )
-      pickList_helper( picks.QB1, pickList )
-      pickList_helper( picks.QB2, pickList )
-      pickList_helper( picks.RB1, pickList )
-      pickList_helper( picks.RB2, pickList )
-      pickList_helper( picks.WR1, pickList )
-      pickList_helper( picks.WR2, pickList )
-      pickList_helper( picks.TD, pickList, position='TD', id=picks.TD.teamId )
-      pickList_helper( picks.PK, pickList )
+      if picks.QB1:
+         pickList_helper( picks.QB1, pickList )
+      if picks.QB2:
+         pickList_helper( picks.QB2, pickList )
+      if picks.RB1:
+         pickList_helper( picks.RB1, pickList )
+      if picks.RB2:
+         pickList_helper( picks.RB2, pickList )
+      if picks.WR1:
+         pickList_helper( picks.WR1, pickList )
+      if picks.WR2:
+         pickList_helper( picks.WR2, pickList )
+      if picks.TD:
+         pickList_helper( picks.TD, pickList, position='TD', id=picks.TD.teamId )
+      if picks.PK:
+         pickList_helper( picks.PK, pickList )
       context = { 'picks': pickList, 'posi': { 'qb': qb, 'wr': wr, 'rb': rb,
                                                'pk': pk, 'td': td } }
       return render( req, 'myPicks.html', context )

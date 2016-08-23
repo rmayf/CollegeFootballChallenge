@@ -4,9 +4,23 @@
 {% block title %}{% trans "Log in" %}{% endblock %}
 
 {% block content %}
-<div id="login-required" class="pure-alert pure-alert-warning">Login Required</div>
+<div id="login-required" class="pure-alert pure-alert-warning" onclick="hideAlert()">
+   <div id="alert-message">
+      Login Required
+   </div>
+   <div id="alert-icon">
+      <icon class="fa fa-times"/>
+   </div>
+</div>
 {% if form.errors %}
-<div id="alert-failure" class="pure-alert pure-alert-error" style="display: block;">Incorrect Username or Password</div>
+<div id="alert-failure" class="pure-alert pure-alert-error" onclick="hideAlert()">
+   <div id="alert-message">
+      Incorrect Username or Password
+   </div>
+   <div id="alert-icon">
+      <icon class="fa fa-times"/>
+   </div>
+</div>
 {% endif %}
 <form class="pure-form pure-form-stacked" method="post" action="">
     {% csrf_token %}
