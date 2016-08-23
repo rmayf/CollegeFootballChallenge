@@ -48,11 +48,14 @@ class PlayerStat( models.Model ):
    passingYards = models.IntegerField( default=0 )
    passingTD = models.IntegerField( default=0 )
    thrownInterceptions = models.IntegerField( default=0 )
-   # RB/WR-specific
-   TD = models.IntegerField( default=0 )
+   # RB-specific
+   rushingTD = models.IntegerField( default=0 )
    carries = models.IntegerField( default=0 )
+   rushingYards = models.IntegerField( default=0 )
+   # WR-specific
+   receivingTD = models.IntegerField( default=0 )
    receptions = models.IntegerField( default=0 )
-   yards = models.IntegerField( default=0 )
+   receivingYards = models.IntegerField( default=0 )
    # PK-specific
    extraPoints = models.IntegerField( default=0 )
    fieldGoals = models.IntegerField( default=0 )
@@ -67,6 +70,7 @@ class DefenseStat( models.Model ):
    puntTD = models.IntegerField( default=0 )
    interceptionsTD = models.IntegerField( default=0 )
    interceptions = models.IntegerField( default=0 )
+   pointsAgainst = models.IntegerField( default=0 )
    # Final calculted score
    score = models.IntegerField( default=0 )
 

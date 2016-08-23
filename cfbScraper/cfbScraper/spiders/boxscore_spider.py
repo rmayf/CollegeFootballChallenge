@@ -141,7 +141,7 @@ class BoxscoreSpider( scrapy.Spider ):
 			existingScore = defenseStat.score
 		except DefenseStat.DoesNotExist:
 			existingScore = 0
-		
+
 		if len( teamInterceptionsSel.xpath( ".//tr" ) ) > 1: 
 			sel = teamInterceptionsSel.xpath( ".//tr" )[ -1 ]
 			interceptions = int( sel.xpath( ".//td[ @class='int' ]/text()" ).extract()[ 0 ] )
@@ -160,7 +160,7 @@ class BoxscoreSpider( scrapy.Spider ):
    		
 		try:
 			defenseStat = DefenseStat.objects.get( team=team, week=self.week )
-			existingScore = defenseStat.newScore
+			existingScore = defenseStat.score
 		except DefenseStat.DoesNotExist:
 			existingScore = 0
 		
@@ -186,9 +186,39 @@ class BoxscoreSpider( scrapy.Spider ):
 		if len( teamPuntReturnsSel.xpath( ".//tr" ) ) > 1:
 			sel = teamPuntReturnsSel.xpath( ".//tr" )[ -1 ]
 			puntTD = int( sel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
-			newScore = 6 * kickoffTD
+			newScore = 6 * puntTD
 			DefenseStat.objects.update_or_create( team=team, week=self.week,
 				defaults={ 'puntTD' : puntTD, 'score' : existingScore + newScore } )
+
+	def parseTeamPointsAgainst( self, idx, teamPointsAgainstSel ):
+		try:
+			team = Team.objects.get( teamId=self.teamIds[ 0 if idx else 1 ] )
+		except Team.DoesNotExist:
+			return
+
+		try:
+			defenseStat = DefenseStat.objects.get( team=team, week=self.week )
+			existingScore = defenseStat.score
+		except DefenseStat.DoesNotExist:
+			existingScore = 0
+
+		pointsAgainst = int( teamPointsAgainstSel.extract() )
+		if pointsAgainst == 0:
+			newScore = 10
+		elif pointsAgainst < 7:
+			newScore = 7
+		elif pointsAgainst < 14:
+			newScore = 4
+		elif pointsAgainst < 21:
+			newScore = 1
+		elif pointsAgainst < 28:
+			newScore = 0
+		elif pointsAgainst < 35:
+			newScore = -1
+		else:
+			newScore = -4
+		DefenseStat.objects.update_or_create( team=team, week=self.week,
+			defaults={ 'pointsAgainst' : pointsAgainst, 'score' : existingScore + newScore } )
    
 	def parse(self, response):
 		boxscoresSel = response.xpath( "//article[ @data-behavior='boxscore_tabs' ]" )
@@ -206,3 +236,8 @@ class BoxscoreSpider( scrapy.Spider ):
 			self.parseTeamKickReturns( idx, teamKickReturnsSel )
 		for idx, teamPuntReturnsSel in enumerate( boxscoresSel.xpath( ".//div[ @id='gamepackage-puntReturns' ]//tbody" ) ):
 			self.parseTeamPuntReturns( idx, teamPuntReturnsSel )
+
+		# Parse points against for defensestat
+		for idx, teamPointsAgainstSel in enumerate( response.xpath( "//td[ @class='final-score' ]/text()" ) ):
+			self.parseTeamPointsAgainst( idx, teamPointsAgainstSel )
+
