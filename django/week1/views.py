@@ -140,24 +140,24 @@ def myPicks( req ):
 			 'passingYards': lastWeek.passingYards,
 			 'passingTD': lastWeek.passingTD,
 			 'thrownInterceptions': lastWeek.thrownInterceptions,
-			 'yards': lastWeek.yards,
-			 'TD': lastWeek.TD }
+			 'yards': lastWeek.rushingYards,
+			 'TD': lastWeek.rushingTD }
 	       qb[ player.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
 				     'stats': stats, 'team': player.team.name.replace( ' ', '_' ),
                                      'id': player.espnId }
 	    elif player.position == 'RB':
-	       stats = { 'TD': lastWeek.TD,
+	       stats = { 'TD': lastWeek.rushingTD,
 			 'carries': lastWeek.carries,
 			 'receptions': lastWeek.receptions,
-			 'yards': lastWeek.yards }
+			 'yards': lastWeek.rushingYards }
 	       rb[ player.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
 				     'stats': stats, 'team': player.team.name.replace( ' ', '_' ),
                                      'id': player.espnId }
 	    elif player.position == 'WR':
-	       stats = { 'TD': lastWeek.TD,
+	       stats = { 'TD': lastWeek.receivingTD,
 			 'carries': lastWeek.carries,
 			 'receptions': lastWeek.receptions,
-			 'yards': lastWeek.yards }
+			 'yards': lastWeek.receivingYards }
 	       wr[ player.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
 				     'stats': stats, 'team': player.team.name.replace( ' ', '_' ), 
                                      'id': player.espnId }
