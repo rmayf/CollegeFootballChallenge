@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load i18n %}
+{% block title %}{% trans "My Picks" %}{% endblock %}
+{% block content %}
+<h1> Submissions are closed </h1>
+<div id="picks">
+   <h2>Week {{ week }} Entry</h2>
+   <table class="pure-table">
+      {% for player in picks|dictsort:"id" %}
+      <tr>
+         <td>
+            {{ player.position }} 
+         </td>
+         <td>
+            {{ player.name }}
+         </td>
+      </tr>
+      {% endfor %}
+   </table>
+</div>
+<p> Deadline to submit picks is Thursday 17:00 PST </p>
+<p> Submission for next week will open on Monday </p>
+{% endblock %}

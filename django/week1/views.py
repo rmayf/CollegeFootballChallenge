@@ -9,12 +9,37 @@ from django.http import Http404
 from django.http import HttpResponseRedirect
 from django.utils import timezone
 
+from datetime import datetime
+
 PAC = "Pac-12"
+THURSDAY = 3
 
 @login_required
 def myPicks( req ):
    week = Season.objects.all()[ 0 ].currentWeek
    picks = Picks.objects.get_or_create( week=week, user=req.user )[ 0 ]
+   # If it's past the deadline, just show your picks
+   now = datetime.now()
+   if ( now.weekday() == THURSDAY and now >= datetime( now.year, now.month, now.day, 17 ) ) or now.weekday() > THURSDAY: 
+      closedPickList = []
+      if picks.QB1:
+         closedPickList.append( { "id": 1, "position": "QB", "name": picks.QB1.name } )
+      if picks.QB2:
+         closedPickList.append( { "id": 2, "position": "QB", "name": picks.QB2.name } )
+      if picks.RB1:
+         closedPickList.append( { "id": 3, "position": "RB", "name": picks.RB1.name } )
+      if picks.RB2:
+         closedPickList.append( { "id": 4, "position": "RB", "name": picks.RB2.name } )
+      if picks.WR1:
+         closedPickList.append( { "id": 5, "position": "WR", "name": picks.WR1.name } )
+      if picks.WR2:
+         closedPickList.append( { "id": 6, "position": "WR", "name": picks.WR2.name } )
+      if picks.TD:
+         closedPickList.append( { "id": 7, "position": "TD", "name": picks.TD.name } )
+      if picks.PK:
+         closedPickList.append( { "id": 8, "position": "PK", "name": picks.PK.name } )
+      return render( req, "picksLocked.html", { "picks": closedPickList,
+                                                "week": week } )
    if req.method == 'POST':
       qb1 = req.POST.get( 'QB1' )
       if qb1 == '':
@@ -217,28 +242,28 @@ def myPicks( req ):
       return render( req, 'myPicks.html', context )
    
 def inDepth( req, week ):
+   week = int( week )
+   currentWeek = Season.objects.first().currentWeek
    def helper_player( player ):
       if player:
          playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
          team = player.team
-         try:
-            game = Game.objects.get( team=team, week=week )
+         now = datetime.now()
+         if ( week < currentWeek ) or ( pick.user == req.user ) or now.weekday() > THURSDAY or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.date, 17 ) ):
             return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
-         except Game.DoesNotExist:
-            if pick.user == req.user:
-               return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
+         else:
+            return None
       else:
          return None
 
    def helper_team( team ):
       if team:
          teamStat = DefenseStat.objects.get_or_create( team=team, week=week )[ 0 ]
-         try:
-            game = Game.objects.get( team=team, week=week )
+         now = datetime.now()
+         if ( week < currentWeek ) or ( pick.user == req.user ) or now.weekday() > THURSDAY or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.date, 17 ) ):
             return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
-         except Game.DoesNotExist:
-            if pick.user == req.user:
-               return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
+         else:
+            return None
       else:
          return None
       
