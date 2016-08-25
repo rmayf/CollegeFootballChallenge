@@ -97,7 +97,7 @@ class RosterSpider(scrapy.Spider):
 			self.logger.debug( "Parsing a player for team: %s, name: %s, position: %s" %
 							   ( team.name, name, position ) )
 			espnId = re.match( urlNumRegex, playerUrl ).group( 1 )
-			if position in [ 'QB', 'RB', 'WR', 'PK' ]:
+			if position in [ 'QB', 'RB', 'WR', 'PK', 'FB', 'TE' ]:
 				# Check is player ID already exists in database
 				# (e.g. Troy Williams showing up on both Utah and Washington ESPN rosters
 				try:
@@ -105,6 +105,10 @@ class RosterSpider(scrapy.Spider):
 				except Player.DoesNotExist:
 					self.logger.info( "Creating player for name: %s, team: %s" %
 									  ( name, team.name ) )
+					if position == 'FB':
+						position = 'RB'
+					if position == 'TE':
+						position = 'WR'
 					player = Player.objects.get_or_create( name=name,
 														   position=position,
 														   espnId=espnId,
