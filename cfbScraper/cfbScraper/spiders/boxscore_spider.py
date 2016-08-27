@@ -206,15 +206,19 @@ class BoxscoreSpider( scrapy.Spider ):
 		if pointsAgainst == 0:
 			newScore = 10
 		elif pointsAgainst < 7:
-			newScore = 7
+			newScore = 8
 		elif pointsAgainst < 14:
-			newScore = 4
+			newScore = 6
 		elif pointsAgainst < 21:
-			newScore = 1
+			newScore = 4
 		elif pointsAgainst < 28:
-			newScore = 0
+			newScore = 2
 		elif pointsAgainst < 35:
-			newScore = -1
+			newScore = 1
+		elif pointsAgainst < 42:
+			newScore = 0
+		elif pointsAgainst < 49:
+			newScore = -2
 		else:
 			newScore = -4
 		DefenseStat.objects.update_or_create( team=team, week=self.week,
