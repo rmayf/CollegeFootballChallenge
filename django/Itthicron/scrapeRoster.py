@@ -6,7 +6,7 @@ import os
 import subprocess
 
 os.chdir( "../" )
-sqlClearStatsInput = open( 'sql_clear_stats.txt' )
+sqlClearStatsInput = open( 'sql_clear_roster_stats.txt' )
 sqlClearStatsCmd = "sqlite3 db.sqlite3"
 subprocess.call( sqlClearStatsCmd.split(), stdin=sqlClearStatsInput )
 os.chdir( "../cfbScraper" )

@@ -1,0 +1,2 @@
+delete from stats_defensestat;
+delete from stats_playerstat;

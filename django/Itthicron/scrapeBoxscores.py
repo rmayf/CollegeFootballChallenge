@@ -10,7 +10,11 @@ django.setup()
 
 from stats.models import Game
 
-os.chdir( "../../cfbScraper" )
+os.chdir( "../" )
+sqlClearStatsInput = open( 'sql_clear_boxscore_stats.txt' )
+sqlClearStatsCmd = "sqlite3 db.sqlite3"
+subprocess.call( sqlClearStatsCmd.split(), stdin=sqlClearStatsInput )
+os.chdir( "../cfbScraper" )
 scrapyCmd = "scrapy crawl boxscore -a gameId=%s --logfile=scrapy_boxscore_crawl_game_%s.log"
 games = Game.objects.all()
 for game in games:

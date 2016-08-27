@@ -1,0 +1,3 @@
+delete from stats_game;
+delete from stats_player;
+delete from stats_team;
