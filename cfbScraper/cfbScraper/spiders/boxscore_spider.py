@@ -221,7 +221,7 @@ class BoxscoreSpider( scrapy.Spider ):
 			defaults={ 'pointsAgainst' : pointsAgainst, 'score' : existingScore + newScore } )
    
 	def parse(self, response):
-		boxscoresSel = response.xpath( "//article[ @data-behavior='boxscore_tabs' ]" )
+		boxscoresSel = response.xpath( '//div[ @id="gamepackage-box-score" ]' )
 		for teamPassingSel in boxscoresSel.xpath( ".//div[ @id='gamepackage-passing' ]//tbody" ):
 			self.parseTeamPassing( teamPassingSel )
 		for teamRushingSel in boxscoresSel.xpath( ".//div[ @id='gamepackage-rushing' ]//tbody" ):

@@ -67,11 +67,11 @@ class RosterSpider(scrapy.Spider):
 								  int( dateString.split()[ 2 ] ) )
 			week = getGameWeek( date )
 			gameId = None
-			recapSel = sel.xpath( './/td' )[ 2 ].xpath( './/a/@href' ).extract()
-			if recapSel and 'recap' in recapSel[ 0 ]:
-				self.logger.info( "Game ID is up for %s vs. %s. recapUrl: %s" %
-								  ( team.name, opponent.name, recapSel[ 0 ] ) )
-				gameId = re.match( urlNumRegex, recapSel[ 0 ] ).group( 1 )
+			recapSel = sel.xpath( './/ul[@class="game-schedule"]' ).extract()
+			if len( recapSel ) > 1:
+				gameId = re.match( urlNumRegex, recapSel[ 1 ] ).group( 1 )
+				self.logger.info( "Game ID is up for %s vs. %s. GameId: %s" %
+								  ( team.name, opponent.name, gameId ) )
 			else:
 				self.logger.info( "Game ID not up yet for %s vs. %s" %
 								   ( team.name, opponent.name ) )
