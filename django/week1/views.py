@@ -20,8 +20,7 @@ def myPicks( req ):
    picks = Picks.objects.get_or_create( week=week, user=req.user )[ 0 ]
    # If it's past the deadline, just show your picks
    now = datetime.now()
-   #if ( now.weekday() == THURSDAY and now >= datetime( now.year, now.month, now.day, 17 ) ) or now.weekday() > THURSDAY: 
-   if False:
+   if ( now.weekday() == THURSDAY and now >= datetime( now.year, now.month, now.day, 17 ) ) or now.weekday() > THURSDAY: 
       closedPickList = []
       if picks.QB1:
          closedPickList.append( { "id": 1, "position": "QB", "name": picks.QB1.name } )
