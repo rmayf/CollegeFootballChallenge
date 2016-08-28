@@ -2,7 +2,7 @@ function showTable( table ) {
    tables = document.getElementsByClassName( "pure-table player-list" )
    for( var i = 0; i < tables.length; i++ ) {
       if( tables[ i ].id == table ) {
-	 tables[ i ].style.display = 'block'
+	 tables[ i ].style.display = 'inline-block'
       } else {
 	 tables[ i ].style.display = 'none'
       }
@@ -22,8 +22,8 @@ function selectPos( tab, table ) {
    showTable( table )
 }
 
-function dropPlayer( pos, name, id ) {
-   console.log( "dropPlayer Position: " + pos + " Name: " + name + " Id: " + id )
+function dropPlayer( pos, name, id, team ) {
+   console.log( "dropPlayer Position: " + pos + " Name: " + name + " Id: " + id + " Team: " + team)
    // Remove from picks-window
    var picks = document.getElementById( "pick-table" ).getElementsByTagName( "tr" )
    for( var i = 0; i < picks.length; i++ ) {
@@ -54,13 +54,15 @@ function dropPlayer( pos, name, id ) {
    var rows = playerTable.getElementsByTagName( "tr" )
    for( var i = 0; i < rows.length; i++ ) {
       var cur_id = rows[ i ].getAttribute( 'id' )
+      var cur_team = rows[ i ].getAttribute( 'team' )
       var button = rows[ i ].getElementsByTagName( "button" )[ 0 ]
       var icon = rows[ i ].getElementsByTagName( "i" )[ 0 ]
       var cur_name = rows[ i ].children[ 1 ].innerText.trim()
+      console.log( "cur_team: " + cur_team )
       if( cur_id != otherId ) {
          //change to plus
          button.setAttribute( "class", "pure-button" )
-         button.setAttribute( "onClick", "addPlayer( \"" + pos + "\",\"" + cur_name + "\", " + cur_id + ")" )
+         button.setAttribute( "onClick", "addPlayer( \"" + pos + "\",\"" + cur_name + "\", " + cur_id + ",\"" + cur_team + "\")" )
          icon.setAttribute( "class", "fa fa-plus" )
       }
       if( cur_id == id ) {
@@ -69,8 +71,8 @@ function dropPlayer( pos, name, id ) {
    }
 }
 
-function addPlayer( pos, name, id ) {
-   console.log( "addPlayer Position: " + pos + " Name: " + name + " Id: " + id )
+function addPlayer( pos, name, id, team ) {
+   console.log( "addPlayer Position: " + pos + " Name: " + name + " Id: " + id + " Team: " + team )
    // Add to pick-table
    var picks = document.getElementById( "pick-table" ).getElementsByTagName( "tr" )
    var otherId = null
@@ -82,7 +84,7 @@ function addPlayer( pos, name, id ) {
             console.log( "Player already in picks table: " + name )
             return -1
          } else if( !set && row.cells[ 1 ].innerText == "None" ) {
-            row.cells[ 1 ].innerHTML = name 
+            row.cells[ 1 ].innerHTML = "<div class=pure-g><div class=pure-u-4-24><img class=small-icon src=/static/" + team + ".png/></div>" + "<div class=pure-u-20-24><p>" + name  + "</p></div>"
             row.cells[ 1 ].setAttribute( 'espnId', id )
             set = true
          } else {
@@ -107,10 +109,11 @@ function addPlayer( pos, name, id ) {
       var cur_id = rows[ i ].getAttribute( 'id' )
       var button = rows[ i ].getElementsByTagName( "button" )[ 0 ]
       var icon = rows[ i ].getElementsByTagName( "i" )[ 0 ]
+      var cur_team = rows[ i ].getAttribute( 'team' )
       if( cur_id == id ) {
          // change it to the minus
          button.setAttribute( "class", "pure-button" )
-         button.setAttribute( "onClick", "dropPlayer( \"" + pos + "\",\"" + name + "\"," + id + ")" )
+         button.setAttribute( "onClick", "dropPlayer( \"" + pos + "\",\"" + name + "\"," + id + ",\"" + cur_team + "\")" )
          icon.setAttribute( "class", "fa fa-minus" )
          rows[ i ].setAttribute( "class", 'cfbc-picked' )
       } else if( ( otherId != null && otherId != cur_id ) || pos == 'pk' || pos == 'td' ) {

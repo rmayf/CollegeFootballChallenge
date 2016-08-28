@@ -9,13 +9,18 @@
          <icon class="fa fa-times"/>
       </div>
    </div>
-   <table class="pure-table">
+   <table class="pure-table pure-table-bordered">
       <thead>
          <th>Name</th>
          {% with data|first as firstuser %}
             {% for score in firstuser.scores %}
 		  {% if forloop.counter0 <= week %}
-		     <th> <a href="{% url 'inDepth' forloop.counter0 %}">{{ forloop.counter0 }}</a>
+                     {% comment %}
+		     <th> <a href="{% url 'results' forloop.counter0 %}">{{ forloop.counter0 }}</a>
+                     {% endcomment %}
+                     <th class="clickable" onclick="location.href='/results/{{forloop.counter0}}'">
+                        {{ forloop.counter0 }}
+                     </th>
 		  {% else %}
 		     <th class="indepth-disabled"> {{ forloop.counter0 }}
 		  {% endif %}
@@ -29,11 +34,7 @@
             <tr>
             <td>{{ user.name }}</td>
             {% for score in user.scores %}
-	       {% if forloop.counter0 < week %}
-		  <td class="indepth-disabled">	  
-	       {% else %}
-		  <td>
-	       {% endif %}	     
+               <td>
                {% if score or score == 0 %}
                   {{ score }}
                {% else %}

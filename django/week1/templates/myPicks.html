@@ -6,7 +6,7 @@
    window.onload = function() {
       showTable( 'qb' )
       {% for pick in picks %}
-      addPlayer( '{{ pick.position|lower }}', '{{ pick.name }}', '{{ pick.espnId }}' );
+      addPlayer( '{{ pick.position|lower }}', '{{ pick.name }}', '{{ pick.espnId }}', '{{ pick.team }}' );
       {% endfor %}
    }
 </script>
@@ -31,7 +31,7 @@
       <h2>Picks</h2>
       <form class="pure-form">
          {% csrf_token %}
-         <table class="pure-table">
+         <table class="pure-table pure-table-bordered">
             <tbody id="pick-table">
                <tr>
                   <td>QB</td>
@@ -91,7 +91,7 @@
                <input type="hidden" name="PK"  position='pk' />
             </tbody>
          </table>
-         <button type="submit" class="pure-button pure-button-primary" formmethod='POST'>Save</button>
+         <button id="mypicks_submit" type="submit" class="pure-button pure-button-primary" formmethod='POST'>Save</button>
       </form>
    </div>
 
@@ -126,36 +126,37 @@
 	    </li>   
          </ul>
       </div>
+      <div class="pure-u-23-24">
       {% cycle 'qb' 'rb' 'wr' 'td' 'pk' as pos silent %}
       {% for i in 'xxxxx' %}
-      <table id="{{ pos }}" class="pure-table player-list" > 
+      <table id="{{ pos }}" class="pure-table player-list pure-table-bordered" > 
 	 <thead>
 	    <tr>
-	       <td></td>
-	       <td>Player</td>
-	       <td>Opp</td>
-	       <td>Points</td>
-	       <td>Avg</td>
+	       <td class="clickable"></td>
+	       <td class="clickable">Player</td>
+	       <td class="clickable">Opp</td>
+	       <td class="clickable">Points</td>
+	       <td class="clickable">Avg</td>
 	       {% if pos == 'qb' %}
-		  <td>C/A</td>
-		  <td>Passing Yards</td>
-		  <td>Passing TD</td>
-		  <td>Int</td>
-		  <td>Yards</td>
-		  <td>TD</td>
+		  <td class="clickable">C/A</td>
+		  <td class="clickable">Passing Yards</td>
+		  <td class="clickable">Passing TD</td>
+		  <td class="clickable">Int</td>
+		  <td class="clickable">Yards</td>
+		  <td class="clickable">TD</td>
 	       {% elif pos == 'pk' %}
-                  <td>FG</td>
-                  <td>PAT</td>
+                  <td class="clickable">FG</td>
+                  <td class="clickable">PAT</td>
                {% elif pos == 'td' %}
-                  <td>Kickoff TD</td>
-                  <td>Punt TD</td>
-                  <td>Interception TD</td>
-                  <td>Interceptions</td>
+                  <td class="clickable">Kickoff TD</td>
+                  <td class="clickable">Punt TD</td>
+                  <td class="clickable">Interception TD</td>
+                  <td class="clickable">Interceptions</td>
                {% else %}
-		  <td>receptions</td>
-		  <td>carries</td>
-		  <td>yards</td>
-		  <td>TD</td>
+		  <td class="clickable">receptions</td>
+		  <td class="clickable">carries</td>
+		  <td class="clickable">yards</td>
+		  <td class="clickable">TD</td>
 	       {% endif %}
 	    </tr>
 	 </thead>
@@ -163,15 +164,22 @@
 	    {% for k, v in posi.iteritems %}
 	       {% if k == pos %}
 		  {% for name, player in v.iteritems %}
-		     <tr id="{{ player.id }}">
+		     <tr id="{{ player.id }}" team="{{ player.team }}" >
 			<td>
-			   <button class="pure-button" onclick="addPlayer( '{{ pos }}', '{{ name }}', '{{ player.id }}' )">
+			   <button class="pure-button" onclick="addPlayer( '{{ pos }}', '{{ name }}', '{{ player.id }}', '{{ player.team }}' )">
 			      <i class="fa fa-plus" ></i>
 			   </div>
 			</td>
 			<td>
-			   <img src="/static/{{ player.team }}.png/"> 
-			   {{ name }} </td>
+                           <div class="pure-g">
+                           <div class="pure-u-7-24">
+			   <img class="big-icon" src="/static/{{ player.team }}.png/"> 
+                           </div>
+                           <div class="pure-u-17-24">
+			   <p>{{ name }}</p>
+                           </div>
+                           </div>
+                           </td>
 			<td> {{ player.opp }} </td>
 			{% if player.total %}
 			   <td> {{ player.total }} </td>

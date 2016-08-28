@@ -4,7 +4,7 @@ from . import views
 
 urlpatterns = [
    url( r'^$', views.leaderboard, name='week1_index' ),
-   url( r'^inDepth/(?P<week>\d{1,2})$', views.inDepth, name='inDepth' ),
+   url( r'^results/(?P<week>\d{1,2})$', views.results, name='results' ),
    url( r'^login/$', auth_views.login,
         { 'template_name': 'cfbLogin.html' },
         name='cfbLogin' ),
@@ -14,4 +14,5 @@ urlpatterns = [
    url( r'^success/$', views.success, name='success' ),
    url( r'^accounts/settings/$', views.settings, name='settings' ),
    url( r'^myPicks/', views.myPicks, name='my_picks' ),
+   url( r'results/', views.results, name="default_results" ),
 ]

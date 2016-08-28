@@ -20,7 +20,8 @@ def myPicks( req ):
    picks = Picks.objects.get_or_create( week=week, user=req.user )[ 0 ]
    # If it's past the deadline, just show your picks
    now = datetime.now()
-   if ( now.weekday() == THURSDAY and now >= datetime( now.year, now.month, now.day, 17 ) ) or now.weekday() > THURSDAY: 
+   #if ( now.weekday() == THURSDAY and now >= datetime( now.year, now.month, now.day, 17 ) ) or now.weekday() > THURSDAY: 
+   if False:
       closedPickList = []
       if picks.QB1:
          closedPickList.append( { "id": 1, "position": "QB", "name": picks.QB1.name } )
@@ -120,7 +121,7 @@ def myPicks( req ):
       picks.save()
       return HttpResponseRedirect( '/myPicks#success' )
    else: 
-      teams = Team.objects.filter( conference=PAC )
+      teams = Team.objects.filter( conference=PAC ).order_by( "name" )
       td = {}
       for team in teams:
          stats = DefenseStat.objects.filter( team=team ).order_by( "week" )
@@ -144,7 +145,7 @@ def myPicks( req ):
             td[ team.name ] = { 'opp': opp, 'team': team.name.replace( ' ', '_' ),
                                 'id': team.teamId }
 
-      players = Player.objects.filter( team__conference=PAC )
+      players = Player.objects.filter( team__conference=PAC ).order_by( "team", "name" )
       qb = {}
       rb = {}
       wr = {}
@@ -208,19 +209,18 @@ def myPicks( req ):
 
       teamStat = DefenseStat.objects.filter( week=( week - 1 ) )
       pickList = []
-      def pickList_helper( pick, l, position=None, id=None ):
+      def pickList_helper( pick, l, position=None, id=None, team=None ):
          if pick:
-            if position:
-               position = position
-            else:
+            if not position:
                position = pick.position
-            if id:
-               id = id
-            else:
+            if not id:
                id = pick.espnId
+            if not team:
+               team = pick.team.name.replace( ' ', '_' )
             l.append( { 'position': position,
                         'name': pick.name,
-                        'espnId': id } )
+                        'espnId': id,
+                        'team': team, } )
       if picks.QB1:
          pickList_helper( picks.QB1, pickList )
       if picks.QB2:
@@ -234,16 +234,20 @@ def myPicks( req ):
       if picks.WR2:
          pickList_helper( picks.WR2, pickList )
       if picks.TD:
-         pickList_helper( picks.TD, pickList, position='TD', id=picks.TD.teamId )
+         pickList_helper( picks.TD, pickList, position='TD', id=picks.TD.teamId,
+                          team=picks.TD.name.replace( ' ', '_' ) )
       if picks.PK:
          pickList_helper( picks.PK, pickList )
       context = { 'picks': pickList, 'posi': { 'qb': qb, 'wr': wr, 'rb': rb,
                                                'pk': pk, 'td': td } }
       return render( req, 'myPicks.html', context )
    
-def inDepth( req, week ):
-   week = int( week )
+def results( req, week=None ):
    currentWeek = Season.objects.first().currentWeek
+   if week is None:
+      week = int( currentWeek )
+   else:
+      week = int( week )
    def helper_player( player ):
       if player:
          playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
@@ -281,7 +285,7 @@ def inDepth( req, week ):
       data.append( { 'name': pick.user.username, 'picks': pickList, 'score': pick.score } )
 
    context = { 'data': data, 'week': week }
-   return render( req, 'inDepth.html', context )
+   return render( req, 'results.html', context )
 
 
 @login_required
@@ -315,7 +319,7 @@ def leaderboard( req ):
       for picks in userPicks:
          total += picks.score
       dataIndex = 0
-      for i in range( 0, 13 ):
+      for i in range( 0, 14 ):
          if dataIndex < len( userPicks ):
             if userPicks[ dataIndex ].week == i:
                scores.append( userPicks[ dataIndex ].score )
