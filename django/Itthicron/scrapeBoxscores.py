@@ -1,13 +1,6 @@
 #!/usr/bin/env python
-import django
-import os
+import Itthicron
 import subprocess
-import sys
-
-sys.path.append("../")
-os.environ["DJANGO_SETTINGS_MODULE"] = "cfbc.settings"
-django.setup()
-
 from stats.models import Game
 
 os.chdir( "../" )

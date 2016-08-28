@@ -1,15 +1,9 @@
 #!/usr/bin/env python
-import django
-import os
-import sys
-
-sys.path.append("../")
-os.environ["DJANGO_SETTINGS_MODULE"] = "cfbc.settings"
-django.setup()
-
+import Itthicron
 from leaderboard.models import Picks
 from stats.models import *
-currentWeek = Season.objects.all()[ 0 ].currentWeek
+
+currentWeek = Itthicron.currentWeek()
 picks = Picks.objects.filter( week=currentWeek )
 for pick in picks:
 	
