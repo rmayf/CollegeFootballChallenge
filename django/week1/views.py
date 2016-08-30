@@ -129,10 +129,13 @@ def myPicks( req ):
 	    opp = opp.opponent.name
 	 except Game.DoesNotExist:
 	    opp = "BYE"
-         if stats:
+         lastWeek = None
+         for stat in stats:
+            if stat.week == week -1:
+               lastWeek = stat
+         if lastWeek:
             scoreSum = sum( map( lambda stat: stat.score, stats ) )
             avg = scoreSum / len( stats )
-            lastWeek = list( stats )[ -1 ]
             stats = { 'kickoffTD': lastWeek.kickoffTD,
                       'puntTD': lastWeek.puntTD,
                       'interceptionsTD': lastWeek.interceptionsTD,
@@ -156,10 +159,13 @@ def myPicks( req ):
 	    opp = opp.opponent.name
 	 except Game.DoesNotExist:
 	    opp = "BYE"
-	 if stats:
+         lastWeek = None
+         for stat in stats:
+            if stat.week == week -1:
+               lastWeek = stat
+         if lastWeek:
 	    scoreSum = sum( map( lambda stat: stat.score, stats ) )
 	    avg = scoreSum / len( stats )
-	    lastWeek = list( stats )[ -1 ]
 	    if player.position == 'QB':
 	       stats = { 'ca': "%d / %d" % ( lastWeek.completions, lastWeek.attempts ),
 			 'passingYards': lastWeek.passingYards,

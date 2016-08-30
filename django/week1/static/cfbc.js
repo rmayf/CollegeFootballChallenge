@@ -1,5 +1,153 @@
+function sortByField( playerTable, direction, sort ) {
+   console.log( "sortByField( " + playerTable + ", " + direction + ", " + sort + " )" )
+   if( sort == null ) {
+      console.log( "no sort specified" )
+      return 
+   }
+   // bubble sort the rows, using the sort function
+   var tbody = playerTable.getElementsByTagName( "tbody" )[ 0 ]
+   var rows = tbody.getElementsByTagName( "tr" )
+   // [ 0  |  1  |  2  | ...  |  length - 1 ]
+   //   i     j
+   for( var i = 0; i < rows.length; i++ ) {
+      var sorted = true
+      for( var j = 0; j < rows.length - 1; j++ ) {
+         var sort_result = sort( rows[ j ], rows[ j + 1 ] )
+         if( ( sort_result > 0 && direction == "down" ) || ( sort_result < 0 && direction == "up" ) ) {
+            var tmp = rows[ j + 1 ]
+            tbody.removeChild( rows[ j + 1 ] )
+            tbody.insertBefore( tmp, rows[ j ] )
+            sorted = false
+         } // else if 0, no change is necessary
+      }
+      if( sorted ) {
+         break
+      }
+   }
+}
+
+function fieldSorter( headerCol ) {
+   var playerTable = getPlayerTable( headerCol )
+   var sort = null
+   var direction = 'up'
+
+   // Change html class so we know this is sorted
+   // Also change the chevrons for that visual sex appeal
+   // (yes, I used sex appeal in a comment because I fucking wanted to)
+   if( headerCol.getAttribute( 'sort_direction' ) == 'up' ) {
+      direction = 'down'
+   }
+   var headers = headerCol.parentElement.cells
+   var headerIdx = -1
+   for( var i = 0; i < headers.length; i++ ) {
+      var icon = headers[ i ].getElementsByTagName( 'i' )[ 0 ]
+      if( headers[ i ] == headerCol ) {
+         headerIdx = i
+         headers[ i ].setAttribute( 'sort_direction', direction )
+         if( icon ) {
+            icon.className = "fa fa-chevron-" + direction 
+         } else {
+            headers[ i ].innerHTML += "    <i class=\"fa fa-chevron-" + direction + "\" aria-hidden=\"true\"></i>"
+         }
+      } else {
+         if( icon ) {
+            icon.parentElement.removeChild( icon )
+         }
+         headers[ i ].removeAttribute( 'sort_direction' )
+      }
+   }
+
+   // use the id of the header to select the correct sorting function 
+   // sorting functions take two rows and return 1 if the first is "larger"
+   // 0 if they are "equal" and -1 if the first is "smaller"
+   if( headerCol.id == "sort-pick" ) {
+      sort = sortSelected 
+   } else if( headerCol.id == "sort-player" ) {
+      sort = sortPlayer
+   } else if( headerCol.id == "sort-opp" ) {
+      sort = sortStraightByIdx( headerIdx, -1 )
+   } else if( headerCol.id == "sort-ca" ) {
+      sort = sortCompAttempts( headerIdx )
+   } else {
+      sort = sortNumByIdx( headerIdx )
+   }
+
+   sortByField( playerTable, direction, sort )
+}
+
+function sortCompAttempts( idx ) {
+   return function sortCompAttempts( l, r ) {
+      var transform = function( text ) {
+         var splat = text.split( "/" )       
+         var numerator = parseInt( splat[ 0 ] )
+         var denominator = parseInt( splat[ 1 ] )
+         if( denominator == 0 ) {
+            return 0
+         }
+         return numerator / denominator
+      }
+      var l_percentage = transform( l.cells[ idx ].innerHTML )
+      var r_percentage = transform( r.cells[ idx ].innerHTML )
+      return straightSort( l_percentage, r_percentage )
+   }
+}
+
+function sortNumByIdx( idx, invert=1 ) {
+   return function( l, r ) {
+      return invert * straightSort( parseInt( l.cells[ idx ].innerHTML ), parseInt( r.cells[ idx ].innerHTML ) )
+   }
+}
+
+function sortStraightByIdx( idx, invert=1 ) {
+   return function( l, r ) {
+      return invert * straightSort( l.cells[ idx ].innerHTML, r.cells[ idx ].innerHTML )
+   }
+}
+
+function sortPlayer( l, r ) {
+   var l_name = l.getElementsByClassName( "name-field" )[ 0 ].innerText
+   var r_name = r.getElementsByClassName( "name-field" )[ 0 ].innerText
+   return -1 * straightSort( l_name, r_name )
+}
+
+function straightSort( l, r ) {
+   if( l > r ) {
+      return 1
+   } else if( l == r ) {
+      return 0
+   } else {
+      return -1
+   }
+}
+
+function sortSelected( l, r ) {
+   var iconToInt = function( icon ) {
+      var cls = icon.className
+      if( cls.includes( 'minus' ) ) {
+         return 1
+      } else {
+         return 0 
+      }
+   }
+   // get icon
+   var l_icon = l.getElementsByTagName( "i" )[ 0 ]
+   var r_icon = r.getElementsByTagName( "i" )[ 0 ]
+   return iconToInt( l_icon ) - iconToInt( r_icon )
+}
+
+function getPlayerTable( e ) {
+   var elem = e
+   var positions = [ 'qb', 'rb', 'wr', 'td', 'pk' ]
+   while( elem ) {
+      if ( positions.indexOf( elem.id ) != -1 && elem.nodeName == "TABLE" ) {
+         return elem
+      }
+      elem = elem.parentElement 
+   }
+}
+
 function showTable( table ) {
-   tables = document.getElementsByClassName( "pure-table player-list" )
+   var tables = document.getElementsByClassName( "pure-table player-list" )
    for( var i = 0; i < tables.length; i++ ) {
       if( tables[ i ].id == table ) {
 	 tables[ i ].style.display = 'inline-block'

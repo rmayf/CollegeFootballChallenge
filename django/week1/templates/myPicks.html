@@ -8,6 +8,11 @@
       {% for pick in picks %}
       addPlayer( '{{ pick.position|lower }}', '{{ pick.name }}', '{{ pick.espnId }}', '{{ pick.team }}' );
       {% endfor %}
+
+      var headers = document.getElementsByClassName( "clickable sort-points" )
+      for( var i = 0; i < headers.length; i++ ) {
+         fieldSorter( headers[ i ] )
+      }
    }
 </script>
 <div id="success" class="pure-alert pure-alert-success" onclick="hideAlert()">
@@ -132,31 +137,31 @@
       <table id="{{ pos }}" class="pure-table player-list pure-table-bordered" > 
 	 <thead>
 	    <tr>
-	       <td class="clickable"></td>
-	       <td class="clickable">Player</td>
-	       <td class="clickable">Opp</td>
-	       <td class="clickable">Points</td>
-	       <td class="clickable">Avg</td>
+	       <td id="sort-pick" class="clickable" onclick="fieldSorter( this )"></td>
+	       <td id="sort-player" class="clickable" onclick="fieldSorter( this )">Player</td>
+	       <td id="sort-opp" class="clickable" onclick="fieldSorter( this )">Opp</td>
+	       <td class="clickable sort-points" onclick="fieldSorter( this )">Points</td>
+	       <td id="sort-avg" class="clickable" onclick="fieldSorter( this )">Avg</td>
 	       {% if pos == 'qb' %}
-		  <td class="clickable">C/A</td>
-		  <td class="clickable">Passing Yards</td>
-		  <td class="clickable">Passing TD</td>
-		  <td class="clickable">Int</td>
-		  <td class="clickable">Yards</td>
-		  <td class="clickable">TD</td>
+		  <td id="sort-ca" class="clickable" onclick="fieldSorter( this )">C/A</td>
+		  <td id="sort-passing-yards" class="clickable" onclick="fieldSorter( this )">Passing Yards</td>
+		  <td id="sort-passing-td" class="clickable" onclick="fieldSorter( this )">Passing TD</td>
+		  <td id="sort-int" class="clickable" onclick="fieldSorter( this )">Int</td>
+		  <td id="sort-yards" class="clickable" onclick="fieldSorter( this )">Yards</td>
+		  <td id="sort-td" class="clickable" onclick="fieldSorter( this )">TD</td>
 	       {% elif pos == 'pk' %}
-                  <td class="clickable">FG</td>
-                  <td class="clickable">PAT</td>
+                  <td id="sort-fg" class="clickable" onclick="fieldSorter( this )">FG</td>
+                  <td id="sort-pat" class="clickable" onclick="fieldSorter( this )">PAT</td>
                {% elif pos == 'td' %}
-                  <td class="clickable">Kickoff TD</td>
-                  <td class="clickable">Punt TD</td>
-                  <td class="clickable">Interception TD</td>
-                  <td class="clickable">Interceptions</td>
+                  <td id="sort-kickoff-td" class="clickable" onclick="fieldSorter( this )">Kickoff TD</td>
+                  <td id="sort-punt-td" class="clickable" onclick="fieldSorter( this )">Punt TD</td>
+                  <td id="sort-interception-td" class="clickable" onclick="fieldSorter( this )">Interception TD</td>
+                  <td id="sort-interception" class="clickable" onclick="fieldSorter( this )">Interceptions</td>
                {% else %}
-		  <td class="clickable">receptions</td>
-		  <td class="clickable">carries</td>
-		  <td class="clickable">yards</td>
-		  <td class="clickable">TD</td>
+		  <td id="sort-reception" class="clickable" onclick="fieldSorter( this )">receptions</td>
+		  <td id="sort-carries" class="clickable" onclick="fieldSorter( this )">carries</td>
+		  <td id="sort-yards" class="clickable" onclick="fieldSorter( this )">yards</td>
+		  <td id="sort-td" class="clickable" onclick="fieldSorter( this )">TD</td>
 	       {% endif %}
 	    </tr>
 	 </thead>
@@ -176,7 +181,7 @@
 			   <img class="big-icon" src="/static/{{ player.team }}.png/"> 
                            </div>
                            <div class="pure-u-17-24">
-			   <p>{{ name }}</p>
+			   <p class="name-field">{{ name }}</p>
                            </div>
                            </div>
                            </td>
