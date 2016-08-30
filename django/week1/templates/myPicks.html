@@ -157,6 +157,7 @@
                   <td id="sort-punt-td" class="clickable" onclick="fieldSorter( this )">Punt TD</td>
                   <td id="sort-interception-td" class="clickable" onclick="fieldSorter( this )">Interception TD</td>
                   <td id="sort-interception" class="clickable" onclick="fieldSorter( this )">Interceptions</td>
+                  <td id="sort-points-against" class="clickable" onclick="fieldSorter( this )">Points Againts</td>
                {% else %}
 		  <td id="sort-reception" class="clickable" onclick="fieldSorter( this )">receptions</td>
 		  <td id="sort-carries" class="clickable" onclick="fieldSorter( this )">carries</td>
@@ -219,6 +220,18 @@
                               <td> {{ player.stats.PAT }} </td>
                            {% else %}
                               {% for i in 'xx' %}
+                                 <td> 0 </td>
+                              {% endfor %}
+                           {% endif %}
+                        {% elif pos == 'td' %}
+                           {% if player.stats %}
+                              <td> {{ player.stats.kickoffTD }} </td>
+                              <td> {{ player.stats.puntTD }} </td>
+                              <td> {{ player.stats.interceptionsTD }} </td>
+                              <td> {{ player.stats.interceptions }} </td>
+                              <td> {{ player.stats.pointsAgaints }} </td>
+                           {% else %}
+                              {% for i in 'xxxxx' %}
                                  <td> 0 </td>
                               {% endfor %}
                            {% endif %}

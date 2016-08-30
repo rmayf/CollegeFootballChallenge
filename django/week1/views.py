@@ -139,7 +139,8 @@ def myPicks( req ):
             stats = { 'kickoffTD': lastWeek.kickoffTD,
                       'puntTD': lastWeek.puntTD,
                       'interceptionsTD': lastWeek.interceptionsTD,
-                      'interception': lastWeek.interceptions }
+                      'interception': lastWeek.interceptions,
+                      'pointsAgainst': lastWeek.pointsAgaints }
             td[ team.name ] = { 'opp': opp, 'avg': avg, 'last': lastWeek.score, 'total': scoreSum,
                                 'stats': stats, 'team': team.name.replace( ' ', '_' ),
                                 'id': team.teamId }
