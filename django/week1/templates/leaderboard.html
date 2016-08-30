@@ -14,15 +14,15 @@
          <th>Name</th>
          {% with data|first as firstuser %}
             {% for score in firstuser.scores %}
-		  {% if forloop.counter0 <= week %}
+		  {% if forloop.counter <= week %}
                      {% comment %}
 		     <th> <a href="{% url 'results' forloop.counter0 %}">{{ forloop.counter0 }}</a>
                      {% endcomment %}
-                     <th class="clickable" onclick="location.href='/results/{{forloop.counter0}}'">
-                        {{ forloop.counter0 }}
+                     <th class="clickable" onclick="location.href='/results/{{ forloop.counter }}'">
+                        {{ forloop.counter }}
                      </th>
 		  {% else %}
-		     <th class="indepth-disabled"> {{ forloop.counter0 }}
+		     <th class="indepth-disabled"> {{ forloop.counter }}
 		  {% endif %}
 	       </th>
             {% endfor %}

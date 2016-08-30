@@ -318,7 +318,7 @@ def leaderboard( req ):
       for picks in userPicks:
          total += picks.score
       dataIndex = 0
-      for i in range( 0, 14 ):
+      for i in range( 1, 14 ):
          if dataIndex < len( userPicks ):
             if userPicks[ dataIndex ].week == i:
                scores.append( userPicks[ dataIndex ].score )
