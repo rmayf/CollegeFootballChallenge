@@ -317,14 +317,12 @@ def leaderboard( req ):
       scores = []
       for picks in userPicks:
          total += picks.score
-      dataIndex = 0
       for i in range( 1, 14 ):
-         if dataIndex < len( userPicks ):
-            if userPicks[ dataIndex ].week == i:
-               scores.append( userPicks[ dataIndex ].score )
-               dataIndex += 1
-         else:
-            scores.append( '-' )
+         append = '-'
+         for pick in userPicks:
+            if pick.week == i:
+               append = pick.score
+         scores.append( append )
       toTemp.append( { 'name': user.username, 'total': total, 'scores': scores } )
    week = Season.objects.first().currentWeek
    context = { 'data': toTemp,
