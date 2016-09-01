@@ -10,9 +10,18 @@ from django.http import HttpResponseRedirect
 from django.utils import timezone
 
 from datetime import datetime
+from enum import IntEnum
 
 PAC = "Pac-12"
-THURSDAY = 3
+
+class dow( IntEnum ):
+   Monday = 0
+   Tuesday = 1
+   Wednesday = 2
+   Thursday = 3
+   Friday = 4
+   Saturday = 5
+   Sunday = 6
 
 @login_required
 def myPicks( req ):
@@ -20,7 +29,9 @@ def myPicks( req ):
    picks = Picks.objects.get_or_create( week=week, user=req.user )[ 0 ]
    # If it's past the deadline, just show your picks
    now = datetime.now()
-   if ( now.weekday() == THURSDAY and now >= datetime( now.year, now.month, now.day, 17 ) ) or now.weekday() > THURSDAY: 
+   weekday = now.weekday()
+   if ( weekday == dow.Thursday and now >= datetime( now.year, now.month, now.day, 17 ) ) or weekday == dow.Friday or \
+        weekday == dow.Saturday or ( weekday == dow.Sunday and now < datetime( now.year, now.month, now.day, 12 ) ):
       closedPickList = []
       if picks.QB1:
          closedPickList.append( { "id": 1, "position": "QB", "name": picks.QB1.name } )
@@ -259,7 +270,7 @@ def results( req, week=None ):
          playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
          team = player.team
          now = datetime.now()
-         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > THURSDAY ) or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.day, 17 ) ) ) ):
+         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > dow.Thursday ) or ( now.weekday() == dow.Thursday and now > datetime( now.year, now.month, now.day, 17 ) ) ) ):
             return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
          else:
             return None
@@ -270,7 +281,7 @@ def results( req, week=None ):
       if team:
          teamStat = DefenseStat.objects.get_or_create( team=team, week=week )[ 0 ]
          now = datetime.now()
-         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > THURSDAY ) or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.day, 17 ) ) ) ):
+         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > dow.Thursday ) or ( now.weekday() == dow.Thursday and now > datetime( now.year, now.month, now.day, 17 ) ) ) ):
             return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
          else:
             return None
