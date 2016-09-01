@@ -259,7 +259,7 @@ def results( req, week=None ):
          playerStat = PlayerStat.objects.get_or_create( player=player, week=week )[ 0 ]
          team = player.team
          now = datetime.now()
-         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > THURSDAY ) or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.date, 17 ) ) ) ):
+         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > THURSDAY ) or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.day, 17 ) ) ) ):
             return { 'name': player.name, 'school': team.name.replace( ' ', '_' ), 'score': playerStat.score }
          else:
             return None
@@ -270,7 +270,7 @@ def results( req, week=None ):
       if team:
          teamStat = DefenseStat.objects.get_or_create( team=team, week=week )[ 0 ]
          now = datetime.now()
-         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > THURSDAY ) or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.date, 17 ) ) ) ):
+         if ( week < currentWeek ) or ( pick.user == req.user ) or ( week == currentWeek and ( ( now.weekday() > THURSDAY ) or ( now.weekday() == THURSDAY and now > datetime( now.year, now.month, now.day, 17 ) ) ) ):
             return { 'name': team.name, 'school': team.name.replace( ' ', '_' ), 'score': teamStat.score }
          else:
             return None
