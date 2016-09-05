@@ -50,7 +50,10 @@ class BoxscoreSpider( scrapy.Spider ):
 					   'score' : existingScore + newScore } )
 		 
 	def parsePlayerRushing( self, playerRushingSel ):
-		playerUrl = playerRushingSel.xpath( './/a/@href' ).extract()[ 0 ]
+		playerUrl = playerRushingSel.xpath( './/a/@href' ).extract()
+                if len( playerUrl ) < 1:
+                        return
+                playerUrl = playerUrl[ 0 ]
 		try:
 			player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
 		except Player.DoesNotExist:
