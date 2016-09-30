@@ -11,10 +11,10 @@ class BoxscoreSpider( scrapy.Spider ):
 	def __init__( self, gameId ):
 		try:
 			games = Game.objects.filter( gameId=gameId )
-                        for game in games:
-                           awayTeamId = game.opponent.teamId
-                           homeTeamId = game.team.teamId
-                           self.week = game.week
+                        game = games[ 0 ]
+                        awayTeamId = game.opponent.teamId
+                        homeTeamId = game.team.teamId
+                        self.week = game.week
 		except Game.DoesNotExist:
 			# TODO: handle more gracefully
 			awayTeamId = -1
@@ -33,11 +33,6 @@ class BoxscoreSpider( scrapy.Spider ):
 		except Player.DoesNotExist:
 		   return
 
-   		try:
-			playerStat = PlayerStat.objects.get( player=player, week=self.week )
-			existingScore = playerStat.score
-		except PlayerStat.DoesNotExist:
-			existingScore = 0
 		m = re.match( '([0-9]+)\/([0-9]+)', playerPassingSel \
 											   .xpath( ".//td[ @class='c-att' ]/text()" ) \
 											   .extract()[ 0 ] )
@@ -46,12 +41,11 @@ class BoxscoreSpider( scrapy.Spider ):
 		passingYards = int( playerPassingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
 		passingTD = int( playerPassingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
 		thrownInterceptions = int( playerPassingSel.xpath( ".//td[ @class='int' ]/text()" ).extract()[ 0 ] )
-		newScore = 4 * passingTD + 0.04 * passingYards - 2 * thrownInterceptions
 		PlayerStat.objects.update_or_create( player=player, week=self.week,
 			defaults={ 'completions' : completions, 'attempts' : attempts,
 					   'passingYards' : passingYards, 'passingTD' : passingTD,
 					   'thrownInterceptions' : thrownInterceptions,
-					   'score' : existingScore + newScore } )
+					   'score' : 0 } )
 		 
 	def parsePlayerRushing( self, playerRushingSel ):
 		playerUrl = playerRushingSel.xpath( './/a/@href' ).extract()
@@ -63,20 +57,13 @@ class BoxscoreSpider( scrapy.Spider ):
 		except Player.DoesNotExist:
 			return
    		
-		try:
-			playerStat = PlayerStat.objects.get( player=player, week=self.week )
-			existingScore = playerStat.score
-		except PlayerStat.DoesNotExist:
-			existingScore = 0
-		
 		rushingTD = int( playerRushingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
 		carries = int( playerRushingSel.xpath( ".//td[ @class='car' ]/text()" ).extract()[ 0 ] )
 		rushingYards = int( playerRushingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
-		newScore = 6 * rushingTD + 0.1 * rushingYards
 		PlayerStat.objects.update_or_create( player=player, week=self.week,
 			defaults={ 'rushingTD' : rushingTD, 'carries' : carries,
 					   'rushingYards' : rushingYards,
-					   'score' : existingScore + newScore } )
+					   'score' : 0 } )
 
 	def parsePlayerReceiving( self, playerReceivingSel ):
 		playerUrl = playerReceivingSel.xpath( './/a/@href' ).extract()[ 0 ]
@@ -85,20 +72,13 @@ class BoxscoreSpider( scrapy.Spider ):
 		except Player.DoesNotExist:
 			return
    		
-		try:
-			playerStat = PlayerStat.objects.get( player=player, week=self.week )
-			existingScore = playerStat.score
-		except PlayerStat.DoesNotExist:
-			existingScore = 0
-		
 		receivingTD = int( playerReceivingSel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
 		receptions = int( playerReceivingSel.xpath( ".//td[ @class='rec' ]/text()" ).extract()[ 0 ] )
 		receivingYards = int( playerReceivingSel.xpath( ".//td[ @class='yds' ]/text()" ).extract()[ 0 ] )
-		newScore = 6 * receivingTD + 0.1 * receivingYards
 		PlayerStat.objects.update_or_create( player=player, week=self.week,
 			defaults={ 'receivingTD' : receivingTD, 'receptions' : receptions,
 					   'receivingYards' : receivingYards,
-					   'score' : existingScore + newScore } )
+					   'score' : 0 } )
    
 	def parsePlayerKicking( self, playerKickingSel ):
 		playerUrl = playerKickingSel.xpath( './/a/@href' ).extract()[ 0 ]
@@ -106,20 +86,13 @@ class BoxscoreSpider( scrapy.Spider ):
 			player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
 		except Player.DoesNotExist:
 			return
-   		
-		try:
-			playerStat = PlayerStat.objects.get( player=player, week=self.week )
-			existingScore = playerStat.score
-		except PlayerStat.DoesNotExist:
-			existingScore = 0
 		
 		kickRegex = '([0-9]+)\/([0-9]+)'
 		extraPoints = int( re.match( kickRegex, playerKickingSel.xpath( ".//td[ @class='xp' ]/text()" ).extract()[ 0 ] ).group( 1 ) )
 		fieldGoals = int( re.match( kickRegex, playerKickingSel.xpath( ".//td[ @class='fg' ]/text()" ).extract()[ 0 ] ).group( 1 ) )
-		newScore = 1 * extraPoints + 3 * fieldGoals
 		PlayerStat.objects.update_or_create( player=player, week=self.week,
 			defaults={ 'extraPoints' : extraPoints, 'fieldGoals' : fieldGoals,
-					   'score' : existingScore + newScore } )
+					   'score' : 0 } )
    
 	def parseTeamPassing( self, teamPassingSel ):
 		for playerPassingSel in teamPassingSel.xpath( ".//tr" )[ : -1 ]:
@@ -142,22 +115,15 @@ class BoxscoreSpider( scrapy.Spider ):
 			team = Team.objects.get( teamId=self.teamIds[ idx ] )
 		except Team.DoesNotExist:
 			return
-   		
-		try:
-			defenseStat = DefenseStat.objects.get( team=team, week=self.week )
-			existingScore = defenseStat.score
-		except DefenseStat.DoesNotExist:
-			existingScore = 0
 
 		if len( teamInterceptionsSel.xpath( ".//tr" ) ) > 1: 
 			sel = teamInterceptionsSel.xpath( ".//tr" )[ -1 ]
 			interceptions = int( sel.xpath( ".//td[ @class='int' ]/text()" ).extract()[ 0 ] )
 			interceptionsTD = int( sel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
-			newScore = 2 * interceptions + 6 * interceptionsTD
 			DefenseStat.objects.update_or_create( team=team, week=self.week,
 				defaults={ 'interceptions' : interceptions,
 						  'interceptionsTD' : interceptionsTD,
-						  'score' : existingScore + newScore } )
+						  'score' : 0 } )
    
 	def parseTeamKickReturns( self, idx, teamKickReturnsSel):
 		try:
@@ -165,18 +131,11 @@ class BoxscoreSpider( scrapy.Spider ):
 		except Team.DoesNotExist:
 			return
    		
-		try:
-			defenseStat = DefenseStat.objects.get( team=team, week=self.week )
-			existingScore = defenseStat.score
-		except DefenseStat.DoesNotExist:
-			existingScore = 0
-		
 		if len( teamKickReturnsSel.xpath( ".//tr" ) ) > 1:
 			sel = teamKickReturnsSel.xpath( ".//tr" )[ -1 ]
 			kickoffTD = int( sel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
-			newScore = 6 * kickoffTD
 			DefenseStat.objects.update_or_create( team=team, week=self.week,
-				defaults={ 'kickoffTD' : kickoffTD, 'score' : existingScore + newScore } )
+				defaults={ 'kickoffTD' : kickoffTD, 'score' : 0 } )
    
 	def parseTeamPuntReturns( self, idx, teamPuntReturnsSel ):
 		try:
@@ -184,18 +143,11 @@ class BoxscoreSpider( scrapy.Spider ):
 		except Team.DoesNotExist:
 			return
    		
-		try:
-			defenseStat = DefenseStat.objects.get( team=team, week=self.week )
-			existingScore = defenseStat.score
-		except DefenseStat.DoesNotExist:
-			existingScore = 0
-		
 		if len( teamPuntReturnsSel.xpath( ".//tr" ) ) > 1:
 			sel = teamPuntReturnsSel.xpath( ".//tr" )[ -1 ]
 			puntTD = int( sel.xpath( ".//td[ @class='td' ]/text()" ).extract()[ 0 ] )
-			newScore = 6 * puntTD
 			DefenseStat.objects.update_or_create( team=team, week=self.week,
-				defaults={ 'puntTD' : puntTD, 'score' : existingScore + newScore } )
+				defaults={ 'puntTD' : puntTD, 'score' : 0 } )
 
 	def parseTeamPointsAgainst( self, idx, teamPointsAgainstSel ):
 		try:
@@ -203,33 +155,9 @@ class BoxscoreSpider( scrapy.Spider ):
 		except Team.DoesNotExist:
 			return
 
-		try:
-			defenseStat = DefenseStat.objects.get( team=team, week=self.week )
-			existingScore = defenseStat.score
-		except DefenseStat.DoesNotExist:
-			existingScore = 0
-
 		pointsAgainst = int( teamPointsAgainstSel.extract() )
-		if pointsAgainst == 0:
-			newScore = 10
-		elif pointsAgainst < 7:
-			newScore = 8
-		elif pointsAgainst < 14:
-			newScore = 6
-		elif pointsAgainst < 21:
-			newScore = 4
-		elif pointsAgainst < 28:
-			newScore = 2
-		elif pointsAgainst < 35:
-			newScore = 1
-		elif pointsAgainst < 42:
-			newScore = 0
-		elif pointsAgainst < 49:
-			newScore = -2
-		else:
-			newScore = -4
 		DefenseStat.objects.update_or_create( team=team, week=self.week,
-			defaults={ 'pointsAgainst' : pointsAgainst, 'score' : existingScore + newScore } )
+			defaults={ 'pointsAgainst' : pointsAgainst, 'score' : 0 } )
    
 	def parse(self, response):
 		boxscoresSel = response.xpath( '//div[ @id="gamepackage-box-score" ]' )
