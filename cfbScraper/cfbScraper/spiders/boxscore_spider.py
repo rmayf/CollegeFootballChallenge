@@ -24,7 +24,10 @@ class BoxscoreSpider( scrapy.Spider ):
 		self.start_urls = [ "http://espn.go.com/college-football/boxscore?gameId=%s" % gameId ]
 
 	def parsePlayerPassing( self, playerPassingSel ):
-		playerUrl = playerPassingSel.xpath( './/a/@href' ).extract()[ 0 ]
+		playerUrl = playerPassingSel.xpath( './/a/@href' ).extract()
+                if len( playerUrl ) < 1:
+                        return
+                playerUrl = playerUrl[ 0 ]
 		try:
 		   player = Player.objects.get( espnId=re.match( '.*?([0-9]+)', playerUrl ).group( 1 ) )
 		except Player.DoesNotExist:
