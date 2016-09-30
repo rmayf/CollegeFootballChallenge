@@ -10,10 +10,11 @@ class BoxscoreSpider( scrapy.Spider ):
 
 	def __init__( self, gameId ):
 		try:
-			game = Game.objects.get( gameId=gameId )
-			awayTeamId = game.opponent.teamId
-			homeTeamId = game.team.teamId
-			self.week = game.week
+			games = Game.objects.filter( gameId=gameId )
+                        for game in games:
+                           awayTeamId = game.opponent.teamId
+                           homeTeamId = game.team.teamId
+                           self.week = game.week
 		except Game.DoesNotExist:
 			# TODO: handle more gracefully
 			awayTeamId = -1
