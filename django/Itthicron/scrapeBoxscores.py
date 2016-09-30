@@ -18,6 +18,6 @@ stderr.write( columns.format( "WEEK", "TEAM", "OPP", "ESPN_ID" ) + "\n" )
 stderr.write( seperator.format( "" ) + "\n" )
 for game in games:
 	if game.gameId is not None:
-                stderr.write( columns.format( game.week, game.team.name,
-                                              game.opponent.name, game.gameId ) + "\n" )
+                stderr.write( columns.format( game.week, game.team.name.encode( 'utf8' ),
+                                              game.opponent.name.encode( 'utf8' ), game.gameId ) + "\n" )
 		subprocess.call( ( scrapyCmd % ( game.gameId, game.gameId ) ).split() )
