@@ -2,6 +2,7 @@ from django.shortcuts import render
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.views.decorators.http import require_safe
+from django.db.models import Q
 from leaderboard.models import Picks
 from stats.models import Player, Team, Season, PlayerStat, DefenseStat, Game
 from django.http import Http404
@@ -138,8 +139,8 @@ def myPicks( req ):
       for team in teams:
          stats = DefenseStat.objects.filter( team=team ).order_by( "week" )
 	 try:
-	    opp = Game.objects.get( team=team, week=week )
-	    opp = opp.opponent.name
+	    game = Game.objects.get( Q( team=team ) | Q( opponent=team ), week=week )
+            opp = game.opponent.name if team == game.team else game.team.name
 	 except Game.DoesNotExist:
 	    opp = "BYE"
          lastWeek = None
@@ -169,8 +170,8 @@ def myPicks( req ):
       for player in players:
 	 stats = PlayerStat.objects.filter( player=player ).order_by( "week" )
 	 try:
-	    opp = Game.objects.get( team=player.team, week=week )
-	    opp = opp.opponent.name
+	    game = Game.objects.get( Q( team=player.team ) | Q( opponent=player.team ), week=week )
+            opp = game.opponent.name if player.team == game.team else game.team.name
 	 except Game.DoesNotExist:
 	    opp = "BYE"
          lastWeek = None

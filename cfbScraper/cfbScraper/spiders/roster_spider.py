@@ -56,7 +56,8 @@ class RosterSpider(scrapy.Spider):
 		for sel in response.xpath( gameSelectorXPath )[ 2 : ]:
 			teamId =  response.meta[ 'teamId' ]
 			team = Team.objects.get( teamId=teamId )
-			opponentUrl = sel.xpath( './/td' )[ 1 ].xpath( './/a/@href' ).extract()[ 0 ]
+                        opponentTD = sel.xpath( './/td' )[ 1 ]
+			opponentUrl = opponentTD.xpath( './/a/@href' ).extract()[ 0 ]
 			opponentTeamId = re.match( urlNumRegex, opponentUrl ).group( 1 )
 			opponent = Team.objects.get( teamId=opponentTeamId, )
 			self.logger.info( "Parsing schedule for %s, opponent: %s" %
@@ -76,13 +77,15 @@ class RosterSpider(scrapy.Spider):
 				self.logger.info( "Game ID not up yet for %s vs. %s" %
 								   ( team.name, opponent.name ) )
 			# Check if game is already in DB, create new game if not
+                        isHome = opponentTD.css( '.game-status' ).xpath( 'text()' ).extract()[ 0 ] == "vs"
+                        home = team if isHome else opponent
+                        away = opponent if isHome else team
 			try:
-				game = Game.objects.get( team=team, opponent=opponent )
+				game = Game.objects.get( team=home, opponent=away )
 			except Game.DoesNotExist:
 				self.logger.info( "Creating game for %s vs. %s" %
-								  ( team.name, opponent.name ) )
-				game = Game.objects.get_or_create( team=team, opponent=opponent,
-													  date=date, week=week, gameId=gameId )
+								  ( home.name, away.name ) )
+				game = Game.objects.get_or_create( team=home, opponent=away, date=date, week=week, gameId=gameId )
 				 
 	def parseRosterUrl(self, response):
 		playerSelectorXPath = '//table[@class="tablehead"]/tr'
