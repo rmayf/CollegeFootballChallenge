@@ -1,25 +1,19 @@
 import datetime
+import calendar
 import re
 import scrapy
 import unicodedata
 from cfbScraper.items import GameItem, PlayerItem, TeamItem
-from stats.models import Game, Player, Team
+from stats.models import Game, Player, Team, Week
 import django
 django.setup()
 
-currentYear = 2016
-monthStrDict = { 'Aug' : 8, 'Sept' : 9, 'Oct' : 10, 'Nov' : 11, 'Dec' : 12 }
-weekStartMonthDays = [ ( 8, 29 ), ( 9, 5 ), ( 9, 12 ), ( 9, 19 ), ( 9, 26 ),
-                       ( 10, 3 ), ( 10, 10 ), ( 10, 17 ), ( 10, 24 ), ( 10, 31 ),
-                       ( 11, 7 ), ( 11, 14 ), ( 11, 21 ), ( 11, 28 ) ]
-weekStartDates = [ datetime.date( currentYear, month, day ) for month, day in weekStartMonthDays ]
+now = datetime.datetime.now()
+currentYear = now.year
+months = list( calendar.month_abbr )
 
 def getGameWeek( date ):
-   # ugly but I'm tired and just want to get this to work
-   for idx, val in enumerate( weekStartDates ):
-      if date < val:
-         return idx
-   return -1
+   return Week.objects.all()[ 0 ].index # There should only ever be one week entry
 
 class RosterSpider(scrapy.Spider):
 	name = "roster"
@@ -64,7 +58,7 @@ class RosterSpider(scrapy.Spider):
 							  ( team.name, opponent.name ) )
 			dateString = unicodedata.normalize( 'NFKD', sel.xpath( './/td/text()' ) \
 							.extract()[ 0 ] ).encode( 'ascii', 'ignore' )
-			date = datetime.date( currentYear, monthStrDict[ dateString.split()[ 1 ] ],
+			date = datetime.date( currentYear, months.index( dateString.split()[ 1 ][ 0:3 ] ),
 								  int( dateString.split()[ 2 ] ) )
 			week = getGameWeek( date )
 			gameId = None
