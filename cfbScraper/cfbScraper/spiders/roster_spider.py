@@ -13,7 +13,9 @@ currentYear = now.year
 months = list( calendar.month_abbr )
 
 def getGameWeek( date ):
-	return int( Season.objects.get().currentWeek )
+	currentWeek = int( Season.objects.get().currentWeek )
+	weekDiff = now.isocalendar()[ 1 ] - date.isocalendar()[ 1 ]
+	return currentWeek - weekDiff
 
 class RosterSpider(scrapy.Spider):
 	name = "roster"
