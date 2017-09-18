@@ -4,7 +4,7 @@ import re
 import scrapy
 import unicodedata
 from cfbScraper.items import GameItem, PlayerItem, TeamItem
-from stats.models import Game, Player, Team, Week
+from stats.models import Game, Player, Team, Season
 import django
 django.setup()
 
@@ -13,7 +13,7 @@ currentYear = now.year
 months = list( calendar.month_abbr )
 
 def getGameWeek( date ):
-   return Week.objects.all()[ 0 ].index # There should only ever be one week entry
+	return int( Season.objects.get().currentWeek )
 
 class RosterSpider(scrapy.Spider):
 	name = "roster"
