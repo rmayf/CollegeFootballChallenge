@@ -19,7 +19,7 @@ python-social-auth==0.2.12
 queuelib==1.4.2
 requests==2.7.0
 requests-oauthlib==0.5.0
-Scrapy==1.0.3
+Scrapy==1.8.2
 scrapy-djangoitem==1.0.0
 service-identity==14.0.0
 six==1.9.0
