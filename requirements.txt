@@ -7,7 +7,7 @@ django-registration-redux==1.2
 enum34==1.0.4
 idna==2.0
 ipaddress==1.0.14
-lxml==3.4.4
+lxml==4.9.1
 oauthlib==1.0.3
 pyasn1==0.1.8
 pyasn1-modules==0.0.7
